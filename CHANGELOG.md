@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0
+
+- `SnackbarMessage` takes an optional `onDismiss`, called once when the message times out, is
+  dismissed, or is replaced by another message, and never when its action is pressed.
+
 ## 0.1.0
 
 First release, extracted from home-catalogue's `src/ui/` and `src/shell/`.

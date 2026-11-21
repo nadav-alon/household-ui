@@ -8,6 +8,8 @@ export interface SnackbarMessage {
   text: string
   /** An optional button beside the text, for example Undo. Pressing it runs `onAction` and dismisses the snackbar. */
   action?: { label: string; onAction: () => void }
+  /** Called once when the message ends without its action pressed: timed out, dismissed, or replaced by another message. */
+  onDismiss?: () => void
 }
 
 /** How long a snackbar stays before it disappears on its own. */
@@ -22,17 +24,21 @@ const listeners = new Set<Listener>()
 type Hold = 'pointer' | 'focus'
 const holds = new Set<Hold>()
 
-function publish(next: SnackbarMessage | null): void {
+/** Makes `next` the current message and returns the one it ended, if any. The caller runs that message's `onDismiss` once its own state is settled. */
+function publish(next: SnackbarMessage | null): SnackbarMessage | null {
   clearTimeout(timer)
   if (next === null) holds.clear()
+  const outgoing = current
   current = next
   for (const listener of listeners) listener(current)
+  return outgoing === next ? null : outgoing
 }
 
 /** Shows `message` in the app's one snackbar, from any screen. */
 export function showSnackbar(message: SnackbarMessage): void {
-  publish(message)
+  const outgoing = publish(message)
   restartTimeout(message)
+  outgoing?.onDismiss?.()
 }
 
 /** Gives `message` a fresh full timeout, unless a hold keeps it up. */
@@ -60,8 +66,15 @@ function release(reason: Hold): void {
   restartTimeout(current)
 }
 
-/** Dismisses the snackbar if `message` is still the one showing. */
+/** Dismisses the snackbar if `message` is still the one showing, then runs its `onDismiss`. */
 function dismiss(message: SnackbarMessage): void {
+  if (current !== message) return
+  publish(null)
+  message.onDismiss?.()
+}
+
+/** Clears the snackbar if `message` is still the one showing, without running its `onDismiss`: its action was pressed. */
+function consume(message: SnackbarMessage): void {
   if (current === message) publish(null)
 }
 
@@ -105,7 +118,7 @@ export function SnackbarHost() {
         <Button
           variant="text"
           onClick={() => {
-            dismiss(message)
+            consume(message)
             message.action?.onAction()
           }}
         >
@@ -116,7 +129,7 @@ export function SnackbarHost() {
   )
 }
 
-/** Clears the snackbar and its timer; for tests, which share this module-level state. */
+/** Clears the snackbar and its timer; for tests, which share this module-level state. Runs the current message's `onDismiss`, so a callback left over from one test fires here. */
 export function resetSnackbar(): void {
-  publish(null)
+  publish(null)?.onDismiss?.()
 }
