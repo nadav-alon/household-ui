@@ -76,6 +76,60 @@ describe('Snackbar', () => {
     expect(onDismiss).toHaveBeenCalledOnce()
   })
 
+  it('calls onDismiss only after the hold is released and the fresh time has passed', () => {
+    vi.useFakeTimers()
+    const onDismiss = vi.fn()
+    render(<SnackbarHost />)
+    act(() => showSnackbar({ text: 'Saved', onDismiss }))
+    const status = screen.getByRole('status')
+    fireEvent.pointerEnter(status)
+    act(() => {
+      vi.advanceTimersByTime(7000)
+    })
+    expect(onDismiss).not.toHaveBeenCalled()
+    fireEvent.pointerLeave(status)
+    act(() => {
+      vi.advanceTimersByTime(5900)
+    })
+    expect(onDismiss).not.toHaveBeenCalled()
+    act(() => {
+      vi.advanceTimersByTime(200)
+    })
+    expect(onDismiss).toHaveBeenCalledOnce()
+  })
+
+  it('still times out a message shown from inside the replaced message onDismiss', () => {
+    vi.useFakeTimers()
+    const onDismissC = vi.fn()
+    render(<SnackbarHost />)
+    act(() => showSnackbar({ text: 'A', onDismiss: () => showSnackbar({ text: 'C', onDismiss: onDismissC }) }))
+    act(() => showSnackbar({ text: 'B' }))
+    expect(screen.getByRole('status')).toHaveTextContent('C')
+    act(() => {
+      vi.advanceTimersByTime(6100)
+    })
+    expect(screen.getByRole('status')).toBeEmptyDOMElement()
+    expect(onDismissC).toHaveBeenCalledOnce()
+  })
+
+  it('times out the replacing message even if onDismiss throws', () => {
+    vi.useFakeTimers()
+    render(<SnackbarHost />)
+    act(() =>
+      showSnackbar({
+        text: 'A',
+        onDismiss: () => {
+          throw new Error('boom')
+        },
+      }),
+    )
+    expect(() => act(() => showSnackbar({ text: 'B' }))).toThrow('boom')
+    act(() => {
+      vi.advanceTimersByTime(6100)
+    })
+    expect(screen.getByRole('status')).toBeEmptyDOMElement()
+  })
+
   it('calls onDismiss once when the message is replaced by another, even while held', () => {
     vi.useFakeTimers()
     const onDismiss = vi.fn()
@@ -88,7 +142,7 @@ describe('Snackbar', () => {
     expect(onDismiss).toHaveBeenCalledOnce()
   })
 
-  it('calls onDismiss once when the message is dismissed', () => {
+  it('calls onDismiss once when the snackbar is cleared with resetSnackbar, the only non-timeout dismissal', () => {
     const onDismiss = vi.fn()
     render(<SnackbarHost />)
     act(() => showSnackbar({ text: 'Saved', onDismiss }))
