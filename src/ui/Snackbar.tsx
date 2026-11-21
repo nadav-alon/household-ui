@@ -78,8 +78,7 @@ function watchSnackbar(listener: Listener): () => void {
  * Renders the current snackbar, if any. Mount it once, app-wide: the `role="status"` region stays
  * in the document while empty so that screen readers announce a message when it appears.
  *
- * Mounted inside `App`, so a message shown from the setup and sign-in screens, which `Root` renders
- * outside it, is not displayed.
+ * A message shown from a screen rendered outside the host's subtree is not displayed.
  */
 export function SnackbarHost() {
   const [message, setMessage] = useState<SnackbarMessage | null>(null)
