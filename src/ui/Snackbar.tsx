@@ -24,13 +24,13 @@ const listeners = new Set<Listener>()
 type Hold = 'pointer' | 'focus'
 const holds = new Set<Hold>()
 
-function publish(next: SnackbarMessage | null): void {
+function publish(next: SnackbarMessage | null, { actionPressed = false } = {}): void {
   clearTimeout(timer)
   if (next === null) holds.clear()
   const ended = current
   current = next
   for (const listener of listeners) listener(current)
-  if (next === null) ended?.onDismiss?.()
+  if (next === null && !actionPressed) ended?.onDismiss?.()
 }
 
 /** Shows `message` in the app's one snackbar, from any screen. */
@@ -64,9 +64,9 @@ function release(reason: Hold): void {
   restartTimeout(current)
 }
 
-/** Dismisses the snackbar if `message` is still the one showing. */
-function dismiss(message: SnackbarMessage): void {
-  if (current === message) publish(null)
+/** Dismisses the snackbar if `message` is still the one showing; its `onDismiss` runs unless its action was pressed. */
+function dismiss(message: SnackbarMessage, options?: { actionPressed: boolean }): void {
+  if (current === message) publish(null, options)
 }
 
 /** Notifies `listener` immediately, then on every change, with the current message or `null`. Returns the unsubscribe function. */
@@ -109,7 +109,7 @@ export function SnackbarHost() {
         <Button
           variant="text"
           onClick={() => {
-            dismiss(message)
+            dismiss(message, { actionPressed: true })
             message.action?.onAction()
           }}
         >

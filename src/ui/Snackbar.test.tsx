@@ -32,6 +32,18 @@ describe('Snackbar', () => {
     expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
+  it('never calls onDismiss when the action is pressed', () => {
+    vi.useFakeTimers()
+    const onDismiss = vi.fn()
+    render(<SnackbarHost />)
+    act(() => showSnackbar({ text: 'Deleted Bandages', action: { label: 'Undo', onAction: () => {} }, onDismiss }))
+    fireEvent.click(screen.getByRole('button', { name: 'Undo' }))
+    act(() => {
+      vi.advanceTimersByTime(60000)
+    })
+    expect(onDismiss).not.toHaveBeenCalled()
+  })
+
   it('disappears after about 6 seconds', () => {
     vi.useFakeTimers()
     render(<SnackbarHost />)
