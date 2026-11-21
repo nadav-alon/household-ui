@@ -8,6 +8,8 @@ export interface SnackbarMessage {
   text: string
   /** An optional button beside the text, for example Undo. Pressing it runs `onAction` and dismisses the snackbar. */
   action?: { label: string; onAction: () => void }
+  /** Called once when the message ends without its action pressed: timed out, dismissed, or replaced by another message. */
+  onDismiss?: () => void
 }
 
 /** How long a snackbar stays before it disappears on its own. */
@@ -25,8 +27,10 @@ const holds = new Set<Hold>()
 function publish(next: SnackbarMessage | null): void {
   clearTimeout(timer)
   if (next === null) holds.clear()
+  const ended = current
   current = next
   for (const listener of listeners) listener(current)
+  if (next === null) ended?.onDismiss?.()
 }
 
 /** Shows `message` in the app's one snackbar, from any screen. */

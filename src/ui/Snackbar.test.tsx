@@ -46,6 +46,24 @@ describe('Snackbar', () => {
     expect(screen.getByRole('status')).toBeEmptyDOMElement()
   })
 
+  it('calls onDismiss once when the message times out', () => {
+    vi.useFakeTimers()
+    const onDismiss = vi.fn()
+    render(<SnackbarHost />)
+    act(() => showSnackbar({ text: 'Saved', onDismiss }))
+    act(() => {
+      vi.advanceTimersByTime(5900)
+    })
+    expect(onDismiss).not.toHaveBeenCalled()
+    act(() => {
+      vi.advanceTimersByTime(200)
+    })
+    act(() => {
+      vi.advanceTimersByTime(60000)
+    })
+    expect(onDismiss).toHaveBeenCalledOnce()
+  })
+
   it('replaces the current message with a second one, which gets its own full time', () => {
     vi.useFakeTimers()
     render(<SnackbarHost />)
