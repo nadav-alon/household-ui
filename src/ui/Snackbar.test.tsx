@@ -76,6 +76,26 @@ describe('Snackbar', () => {
     expect(onDismiss).toHaveBeenCalledOnce()
   })
 
+  it('calls onDismiss once when the message is replaced by another, even while held', () => {
+    vi.useFakeTimers()
+    const onDismiss = vi.fn()
+    render(<SnackbarHost />)
+    act(() => showSnackbar({ text: 'First', onDismiss }))
+    fireEvent.pointerEnter(screen.getByRole('status'))
+    act(() => showSnackbar({ text: 'Second' }))
+    expect(onDismiss).toHaveBeenCalledOnce()
+    act(() => resetSnackbar())
+    expect(onDismiss).toHaveBeenCalledOnce()
+  })
+
+  it('calls onDismiss once when the message is dismissed', () => {
+    const onDismiss = vi.fn()
+    render(<SnackbarHost />)
+    act(() => showSnackbar({ text: 'Saved', onDismiss }))
+    act(() => resetSnackbar())
+    expect(onDismiss).toHaveBeenCalledOnce()
+  })
+
   it('replaces the current message with a second one, which gets its own full time', () => {
     vi.useFakeTimers()
     render(<SnackbarHost />)

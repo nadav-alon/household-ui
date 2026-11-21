@@ -30,7 +30,7 @@ function publish(next: SnackbarMessage | null, { actionPressed = false } = {}): 
   const ended = current
   current = next
   for (const listener of listeners) listener(current)
-  if (next === null && !actionPressed) ended?.onDismiss?.()
+  if (!actionPressed && ended !== next) ended?.onDismiss?.()
 }
 
 /** Shows `message` in the app's one snackbar, from any screen. */
