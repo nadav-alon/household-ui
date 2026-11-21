@@ -10,6 +10,7 @@
     "src",
     "scripts",
     "!src/**/*.test.*",
+    "!scripts/**/*.test.*",
     "!src/test",
     "!src/testing"
   ],
