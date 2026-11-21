@@ -26,7 +26,7 @@ declare const seedColourBrand: unique symbol
 export type SeedColour = string & { readonly [seedColourBrand]: true }
 
 export function isSeedColour(value: string): value is SeedColour {
-  return /^#[0-9a-f]{6}$/i.test(value)
+  return isHexColour(value)
 }
 
 export function seedColour(value: string): SeedColour {
