@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Writes an app's theme.css from its seed colour: `household-theme <#rrggbb> [out.css]`.
 // colourRoles.ts is TypeScript and Node does not strip types under node_modules, so it is loaded
-// through Vite, which the app has as a peer of unplugin-icons anyway.
+// through Vite, which the app provides as a peer dependency of this package.
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'

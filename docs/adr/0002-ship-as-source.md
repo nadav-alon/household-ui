@@ -13,7 +13,7 @@ externalise all three, and would fix one JSX runtime and one icon pipeline for e
 ## Decision
 
 The package is the files in `src/`, installed as `github:nadav-alon/household-ui#<tag>`.
-`preact`, `unplugin-icons` and `@iconify-json/material-symbols` are peer dependencies, so
+`preact`, `vite`, `unplugin-icons` and `@iconify-json/material-symbols` are peer dependencies, so
 the app's own copies are the ones used. There is no `dist/`, no build script and nothing to
 publish beyond the tag.
 
