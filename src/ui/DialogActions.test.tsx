@@ -46,7 +46,7 @@ describe('DialogActions', () => {
     expect(css).toMatch(/__destructive\s*\{\s*margin-right:\s*auto/)
   })
 
-  it('stacks the form with the gap the Item dialog has, so the space above the row is 2.5rem', () => {
+  it('stacks the fields of the form with a spacing-4 gap, so the space above the row is 2.5rem', () => {
     const css = read('src/ui/DialogActions.css')
     expect(css).toMatch(/\.ui-dialog-form\s*\{[^}]*flex-direction:\s*column[^}]*gap:\s*var\(--md-sys-spacing-4\)/)
     const { used, undefinedTokens } = tokenUsage('src/ui/DialogActions.css')

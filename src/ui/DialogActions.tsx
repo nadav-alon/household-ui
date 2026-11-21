@@ -1,7 +1,7 @@
 import type { ComponentChildren } from 'preact'
 import './DialogActions.css'
 
-/** The class a dialog's `<form>` carries so its fields and `DialogActions` space out like the Item dialog's. */
+/** The class a dialog's `<form>` carries so its fields stack with a gap between them and the action row sits 2.5rem below the last field. */
 export const DIALOG_FORM_CLASS = 'ui-dialog-form'
 
 export interface DialogActionsProps {

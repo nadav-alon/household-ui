@@ -1,4 +1,4 @@
-/* A dialog's form: its fields stacked, so the action row's margin adds to the same gap the Item dialog has above its row. */
+/* A dialog's form: its fields stacked with a spacing-4 gap, which the action row's margin adds to so the space above the row is 2.5rem. */
 .ui-dialog-form {
   display: flex;
   flex-direction: column;
