@@ -6,11 +6,11 @@ import { read, tokenUsage } from '../testing/css.ts'
 describe('CentredCard', () => {
   it('shows the app name, the screen heading and its content, with no navigation', () => {
     render(
-      <CentredCard title="Sign in">
+      <CentredCard appName="Recipes" title="Sign in">
         <p>Hello</p>
       </CentredCard>,
     )
-    expect(screen.getByText('Home Catalogue')).toBeInTheDocument()
+    expect(screen.getByText('Recipes')).toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 1, name: 'Sign in' })).toBeInTheDocument()
     expect(screen.getByText('Hello')).toBeInTheDocument()
     expect(screen.getByRole('main')).toBeInTheDocument()
