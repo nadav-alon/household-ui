@@ -66,21 +66,26 @@ export type ColourMode = 'light' | 'dark'
 
 /** The `#rrggbb` a colour role takes in the light or dark scheme derived from `seed`. */
 export function colourRoleHex(seed: SeedColour, role: ColourRoleName, mode: ColourMode): HexColour {
-  return roleHex(scheme(seed, mode), role)
+  return roleHex(scheme(seed, mode), role, mode)
 }
 
 function scheme(seed: SeedColour, mode: ColourMode): SchemeFidelity {
   return new SchemeFidelity(Hct.fromInt(argbFromHex(seed)), mode === 'dark', 0)
 }
 
-/** Amber whatever the seed: M3 has no warning role, and like `error` it must not follow the seed. */
-const warningPalette = TonalPalette.fromHueAndChroma(75, 84)
+/** HCT hue of amber. */
+const amberHue = 75
+/** The HCT chroma asked for; the sRGB gamut clips it to roughly 20–47 at the tones used below. */
+const amberChroma = 84
 
-/** The tone of each warning role per scheme, matching how M3 tones `error`. */
+/** Amber whatever the seed: M3 has no warning role, and like `error` it must not follow the seed. */
+const warningPalette = TonalPalette.fromHueAndChroma(amberHue, amberChroma)
+
+/** The tone of each warning role per scheme, matching how M3 tones `error`, except the light container, which sits a step deeper (85, not 90) so it reads as amber beside the pale pink `errorContainer`. */
 const warningTones = {
   warning: { light: 40, dark: 80 },
   onWarning: { light: 100, dark: 20 },
-  warningContainer: { light: 90, dark: 30 },
+  warningContainer: { light: 85, dark: 30 },
   onWarningContainer: { light: 10, dark: 90 },
 } as const
 
@@ -88,9 +93,9 @@ function isWarningRole(role: ColourRoleName): role is keyof typeof warningTones 
   return role in warningTones
 }
 
-function roleHex(derived: SchemeFidelity, role: ColourRoleName): HexColour {
+function roleHex(derived: SchemeFidelity, role: ColourRoleName, mode: ColourMode): HexColour {
   if (isWarningRole(role)) {
-    return hexColour(hexFromArgb(warningPalette.tone(warningTones[role][derived.isDark ? 'dark' : 'light'])))
+    return hexColour(hexFromArgb(warningPalette.tone(warningTones[role][mode])))
   }
   return hexColour(hexFromArgb(MaterialDynamicColors[role].getArgb(derived)))
 }
@@ -98,7 +103,7 @@ function roleHex(derived: SchemeFidelity, role: ColourRoleName): HexColour {
 function declarations(seed: SeedColour, mode: ColourMode): string {
   const derived = scheme(seed, mode)
   return colourRoleNames
-    .map((role) => `  ${colourRoleProperty(role)}: ${roleHex(derived, role)};`)
+    .map((role) => `  ${colourRoleProperty(role)}: ${roleHex(derived, role, mode)};`)
     .join('\n')
 }
 
