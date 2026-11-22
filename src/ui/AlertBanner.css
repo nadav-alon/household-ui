@@ -4,8 +4,6 @@
   justify-content: space-between;
   gap: var(--md-sys-spacing-2);
   padding: var(--md-sys-spacing-2) var(--md-sys-spacing-4);
-  background: var(--md-sys-color-error-container);
-  color: var(--md-sys-color-on-error-container);
 }
 
 /* The text takes the room the buttons leave, so they sit at the end. */
@@ -17,4 +15,14 @@
 .ui-alert-banner .ui-button--text,
 .ui-alert-banner .ui-icon-button {
   color: inherit;
+}
+
+.ui-alert-banner--urgent {
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+
+.ui-alert-banner--advisory {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
 }

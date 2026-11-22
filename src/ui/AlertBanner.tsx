@@ -6,6 +6,8 @@ import './AlertBanner.css'
 export interface AlertBannerProps {
   /** What the household needs to know, for example `2 urgent Items`. */
   message: string
+  /** `urgent` (the default) is error-coloured; `advisory` is the calmer secondary look. Both are announced as an alert. */
+  tone?: 'urgent' | 'advisory'
   /** An optional button beside the message, for example Review. */
   action?: { label: string; onAction: () => void }
   /** When given, the banner shows a dismiss button that calls it; hiding the banner is the caller's to do. */
@@ -13,9 +15,9 @@ export interface AlertBannerProps {
 }
 
 /** A full-width banner announced to assistive tech as an alert. */
-export function AlertBanner({ message, action, onDismiss }: AlertBannerProps) {
+export function AlertBanner({ message, tone = 'urgent', action, onDismiss }: AlertBannerProps) {
   return (
-    <div role="alert" class="ui-alert-banner">
+    <div role="alert" class={`ui-alert-banner ui-alert-banner--${tone}`}>
       <p class="ui-alert-banner__text">{message}</p>
       {action && (
         <Button variant="text" onClick={action.onAction}>

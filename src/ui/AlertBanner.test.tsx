@@ -28,11 +28,23 @@ describe('AlertBanner', () => {
     expect(onDismiss).toHaveBeenCalledOnce()
   })
 
+  it('is urgent by default and takes the advisory look on request, announced as an alert either way', () => {
+    const { rerender } = render(<AlertBanner message="1 urgent Item" />)
+    expect(screen.getByRole('alert')).toHaveClass('ui-alert-banner--urgent')
+    rerender(<AlertBanner message="1 Item to buy soon" tone="advisory" />)
+    expect(screen.getByRole('alert')).toHaveClass('ui-alert-banner--advisory')
+  })
+
   it('is styled only from defined colour-role tokens, with no hard-coded colour', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/AlertBanner.css')
     expect(read('src/ui/AlertBanner.css')).not.toMatch(/#[0-9a-f]{3,8}\b|rgb|hsl/i)
     expect(used).toEqual(
-      expect.arrayContaining(['--md-sys-color-error-container', '--md-sys-color-on-error-container']),
+      expect.arrayContaining([
+        '--md-sys-color-error-container',
+        '--md-sys-color-on-error-container',
+        '--md-sys-color-secondary-container',
+        '--md-sys-color-on-secondary-container',
+      ]),
     )
     expect(undefinedTokens).toEqual([])
   })
