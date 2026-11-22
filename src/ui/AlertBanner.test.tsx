@@ -19,6 +19,15 @@ describe('AlertBanner', () => {
     expect(onAction).toHaveBeenCalledOnce()
   })
 
+  it('shows a dismiss button only when given onDismiss, and calls it when pressed', () => {
+    const onDismiss = vi.fn()
+    const { rerender } = render(<AlertBanner message="2 urgent Items" />)
+    expect(screen.queryByRole('button', { name: 'Dismiss' })).toBeNull()
+    rerender(<AlertBanner message="2 urgent Items" onDismiss={onDismiss} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
+    expect(onDismiss).toHaveBeenCalledOnce()
+  })
+
   it('is styled only from defined colour-role tokens, with no hard-coded colour', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/AlertBanner.css')
     expect(read('src/ui/AlertBanner.css')).not.toMatch(/#[0-9a-f]{3,8}\b|rgb|hsl/i)

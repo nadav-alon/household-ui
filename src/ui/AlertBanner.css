@@ -8,6 +8,13 @@
   color: var(--md-sys-color-on-error-container);
 }
 
+/* The text takes the room the buttons leave, so they sit at the end. */
 .ui-alert-banner__text {
+  flex: 1;
   margin: 0;
+}
+
+.ui-alert-banner .ui-button--text,
+.ui-alert-banner .ui-icon-button {
+  color: inherit;
 }
