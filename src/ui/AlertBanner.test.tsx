@@ -37,7 +37,7 @@ describe('AlertBanner', () => {
 
   it('is styled only from defined colour-role tokens, with no hard-coded colour', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/AlertBanner.css')
-    expect(read('src/ui/AlertBanner.css')).not.toMatch(/#[0-9a-f]{3,8}\b|rgb|hsl/i)
+    expect(read('src/ui/AlertBanner.css')).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i)
     expect(used).toEqual(
       expect.arrayContaining([
         '--md-sys-color-error-container',
