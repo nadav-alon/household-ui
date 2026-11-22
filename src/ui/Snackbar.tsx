@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { Button } from './Button.tsx'
+import type { ButtonAction } from './ButtonAction.ts'
 import { milliseconds } from './milliseconds.ts'
 import './Snackbar.css'
 
@@ -7,7 +8,7 @@ export interface SnackbarMessage {
   /** What happened, for example `Deleted Bandages`. */
   text: string
   /** An optional button beside the text, for example Undo. Pressing it runs `onAction` and dismisses the snackbar. */
-  action?: { label: string; onAction: () => void }
+  action?: ButtonAction
   /** Called once when the message ends without its action pressed: timed out, dismissed, or replaced by another message. */
   onDismiss?: () => void
 }
