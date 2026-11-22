@@ -1,5 +1,6 @@
 import CloseIcon from '~icons/material-symbols/close'
 import { Button } from './Button.tsx'
+import type { ButtonAction } from './ButtonAction.ts'
 import { IconButton } from './IconButton.tsx'
 import './AlertBanner.css'
 
@@ -9,7 +10,7 @@ export interface AlertBannerProps {
   /** `urgent` (the default) is error-coloured; `advisory` is the calmer secondary look. Both are announced as an alert. */
   tone?: 'urgent' | 'advisory'
   /** An optional button beside the message, for example Review. */
-  action?: { label: string; onAction: () => void }
+  action?: ButtonAction
   /** When given, the banner shows a dismiss button that calls it; hiding the banner is the caller's to do. */
   onDismiss?: () => void
 }
