@@ -26,3 +26,10 @@
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
 }
+
+/* Button.css tints a text button's hover with the primary role; follow the banner's own on-* colour instead. */
+@media (hover: hover) {
+  .ui-alert-banner .ui-button--text:hover:not(:disabled) {
+    background: color-mix(in srgb, currentColor 8%, transparent);
+  }
+}
