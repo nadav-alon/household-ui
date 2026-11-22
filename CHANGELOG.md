@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0
+
+- `AlertBanner`: a `role="alert"` banner taking a message, an optional `action` and `onDismiss`, in an
+  `urgent` (default) or `advisory` tone, themed only through colour-role tokens.
+
 ## 0.3.0
 
 - The household theme emits a `warning` (amber) role family: `--md-sys-color-warning`, `-on-warning`,
