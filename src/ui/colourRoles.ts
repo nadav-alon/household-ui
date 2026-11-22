@@ -4,6 +4,7 @@ import {
   MaterialDynamicColors,
   SchemeFidelity,
   Hct,
+  TonalPalette,
 } from '@material/material-color-utilities'
 
 declare const hexColourBrand: unique symbol
@@ -40,6 +41,7 @@ export const colourRoleNames = [
   'secondary', 'onSecondary', 'secondaryContainer', 'onSecondaryContainer',
   'tertiary', 'onTertiary', 'tertiaryContainer', 'onTertiaryContainer',
   'error', 'onError', 'errorContainer', 'onErrorContainer',
+  'warning', 'onWarning', 'warningContainer', 'onWarningContainer',
   'background', 'onBackground',
   'surface', 'onSurface', 'surfaceVariant', 'onSurfaceVariant',
   'outline', 'outlineVariant', 'shadow', 'scrim',
@@ -71,7 +73,25 @@ function scheme(seed: SeedColour, mode: ColourMode): SchemeFidelity {
   return new SchemeFidelity(Hct.fromInt(argbFromHex(seed)), mode === 'dark', 0)
 }
 
+/** Amber whatever the seed: M3 has no warning role, and like `error` it must not follow the seed. */
+const warningPalette = TonalPalette.fromHueAndChroma(75, 84)
+
+/** The tone of each warning role per scheme, matching how M3 tones `error`. */
+const warningTones = {
+  warning: { light: 40, dark: 80 },
+  onWarning: { light: 100, dark: 20 },
+  warningContainer: { light: 90, dark: 30 },
+  onWarningContainer: { light: 10, dark: 90 },
+} as const
+
+function isWarningRole(role: ColourRoleName): role is keyof typeof warningTones {
+  return role in warningTones
+}
+
 function roleHex(derived: SchemeFidelity, role: ColourRoleName): HexColour {
+  if (isWarningRole(role)) {
+    return hexColour(hexFromArgb(warningPalette.tone(warningTones[role][derived.isDark ? 'dark' : 'light'])))
+  }
   return hexColour(hexFromArgb(MaterialDynamicColors[role].getArgb(derived)))
 }
 

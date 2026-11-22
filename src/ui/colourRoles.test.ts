@@ -20,7 +20,7 @@ describe('colourRolesCss', () => {
       expect(light).toContain(`${property}: #`)
       expect(dark).toContain(`${property}: #`)
     }
-    expect(colourRoleNames).toHaveLength(49)
+    expect(colourRoleNames).toHaveLength(53)
   })
 
   it('gives dark a different surface from light', () => {
@@ -29,7 +29,7 @@ describe('colourRolesCss', () => {
 
   it('regenerates every seed-derived role from a different seed', () => {
     const other = colourRolesCss(seedColour('#16a34a'))
-    const fixed = (role: string) => role === 'shadow' || role === 'scrim' || /^(on)?[eE]rror/.test(role)
+    const fixed = (role: string) => role === 'shadow' || role === 'scrim' || /^(on)?[eE]rror|^(on)?[wW]arning/.test(role)
     const value = (source: string, role: ColourRoleName) =>
       new RegExp(`${colourRoleProperty(role)}: (#[0-9a-f]{6});`).exec(source)![1]
     const neutral = (role: ColourRoleName) => ['#ffffff', '#000000'].includes(value(css, role))
