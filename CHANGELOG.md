@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- The household theme emits a `warning` (amber) role family: `--md-sys-color-warning`, `-on-warning`,
+  `-warning-container` and `-on-warning-container`, in light and dark. The hue is fixed amber, like
+  `error`, whatever the seed; text contrast is at least 4.5:1. Regenerate `theme.css` to get them.
+
 ## 0.2.0
 
 - `SnackbarMessage` takes an optional `onDismiss`, called once when the message times out, is
