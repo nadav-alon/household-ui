@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { type ColourRoleName, colourRoleNames, colourRoleProperty, colourRolesCss, seedColour } from './colourRoles.ts'
+import { type ColourRoleName, colourRoleHex, colourRoleNames, colourRoleProperty, colourRolesCss, seedColour } from './colourRoles.ts'
 
 const seed = seedColour('#e8590c')
 
@@ -45,5 +45,65 @@ describe('colourRolesCss', () => {
 
   it('rejects a seed that is not #rrggbb', () => {
     expect(() => seedColour('blue')).toThrow('blue')
+  })
+})
+
+describe('warning roles', () => {
+  const seeds = ['#2f9e44', '#e8590c', '#16a34a', '#1971c2'].map(seedColour)
+  const pairs = [['warning', 'onWarning'], ['warningContainer', 'onWarningContainer']] as const
+  const modes = ['light', 'dark'] as const
+
+  function luminance(hex: string): number {
+    const [r, g, b] = [1, 3, 5].map((i) => {
+      const c = parseInt(hex.slice(i, i + 2), 16) / 255
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    })
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+  function contrast(a: string, b: string): number {
+    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+    return (hi + 0.05) / (lo + 0.05)
+  }
+  function hue(hex: string): number {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    const max = Math.max(r, g, b)
+    const d = max - Math.min(r, g, b)
+    const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4
+    return (h * 60 + 360) % 360
+  }
+
+  it('declares the four warning roles in the light and dark blocks', () => {
+    const css = colourRolesCss(seeds[0])
+    for (const opener of [':root {', '@media (prefers-color-scheme: dark)']) {
+      const scope = block(css, opener)
+      for (const property of ['warning', 'on-warning', 'warning-container', 'on-warning-container']) {
+        expect(scope).toMatch(new RegExp(`--md-sys-color-${property}: #[0-9a-f]{6};`))
+      }
+    }
+  })
+
+  it('is amber for any seed, apart from error', () => {
+    for (const seed of seeds) {
+      for (const mode of modes) {
+        for (const role of ['warning', 'warningContainer'] as const) {
+          const amber = colourRoleHex(seed, role, mode)
+          expect(hue(amber), `${seed} ${mode} ${role}`).toBeGreaterThanOrEqual(30)
+          expect(hue(amber), `${seed} ${mode} ${role}`).toBeLessThanOrEqual(55)
+          const error = colourRoleHex(seed, role === 'warning' ? 'error' : 'errorContainer', mode)
+          expect(Math.abs(hue(amber) - hue(error)), `${seed} ${mode} ${role}`).toBeGreaterThan(20)
+        }
+      }
+    }
+  })
+
+  it('has text contrast of at least 4.5:1 in both modes', () => {
+    for (const seed of seeds) {
+      for (const mode of modes) {
+        for (const [surface, on] of pairs) {
+          expect(contrast(colourRoleHex(seed, surface, mode), colourRoleHex(seed, on, mode)), `${seed} ${mode} ${on}`)
+            .toBeGreaterThanOrEqual(4.5)
+        }
+      }
+    }
   })
 })
