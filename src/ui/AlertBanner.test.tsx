@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it } from 'vitest'
-import { cleanup, render, screen } from '@testing-library/preact'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen } from '@testing-library/preact'
 import { read, tokenUsage } from '../testing/css.ts'
 import { AlertBanner } from './AlertBanner.tsx'
 
@@ -10,6 +10,13 @@ describe('AlertBanner', () => {
     render(<AlertBanner message="2 urgent Items" />)
     expect(screen.getByRole('alert')).toHaveTextContent('2 urgent Items')
     expect(screen.queryByRole('button')).toBeNull()
+  })
+
+  it('runs its action when the action button is pressed', () => {
+    const onAction = vi.fn()
+    render(<AlertBanner message="2 urgent Items" action={{ label: 'Review', onAction }} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Review' }))
+    expect(onAction).toHaveBeenCalledOnce()
   })
 
   it('is styled only from defined colour-role tokens, with no hard-coded colour', () => {
