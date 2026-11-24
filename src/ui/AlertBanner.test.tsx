@@ -19,6 +19,22 @@ describe('AlertBanner', () => {
     expect(onAction).toHaveBeenCalledOnce()
   })
 
+  it('renders a link action as a native anchor with its href, inside the alert', () => {
+    render(<AlertBanner message="Save held" action={{ label: 'Back to the editor', href: '/recipes/1/edit' }} />)
+    const link = screen.getByRole('link', { name: 'Back to the editor' })
+    expect(link.tagName).toBe('A')
+    expect(link).toHaveAttribute('href', '/recipes/1/edit')
+    expect(link).toHaveClass('ui-button', 'ui-button--text')
+    expect(screen.getByRole('alert')).toContainElement(link)
+    expect(screen.queryByRole('button')).toBeNull()
+  })
+
+  it('rejects an action that is both a link and a button, at compile time', () => {
+    // @ts-expect-error an action is an href or an onAction, never both
+    const both = <AlertBanner message="x" action={{ label: 'Go', href: '/x', onAction: () => {} }} />
+    expect(both).toBeTruthy()
+  })
+
   it('shows a dismiss button only when given onDismiss, and calls it when pressed', () => {
     const onDismiss = vi.fn()
     const { rerender } = render(<AlertBanner message="2 urgent Items" />)

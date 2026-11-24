@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+- `AlertBanner`: `action` can be a link. Given `{ label, href }` instead of `{ label, onAction }`, it renders a
+  native `<a href>` with the text-button look, so modified clicks open it in another tab.
+
 ## 0.4.0
 
 - `AlertBanner`: a `role="alert"` banner taking a message, an optional `action` and `onDismiss`, in an
