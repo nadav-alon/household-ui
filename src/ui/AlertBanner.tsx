@@ -8,6 +8,8 @@ import './AlertBanner.css'
 export interface LinkAction {
   label: string
   href: string
+  /** A link has no handler; give `href` or `onAction`, never both. */
+  onAction?: never
 }
 
 export interface AlertBannerProps {
@@ -16,7 +18,7 @@ export interface AlertBannerProps {
   /** `urgent` (the default) is error-coloured; `advisory` is the calmer secondary look. Both are announced as an alert. */
   tone?: 'urgent' | 'advisory'
   /** An optional button, or link when it has an `href`, beside the message, for example Review. */
-  action?: ButtonAction | LinkAction
+  action?: (ButtonAction & { href?: never }) | LinkAction
   /** When given, the banner shows a dismiss button that calls it; hiding the banner is the caller's to do. */
   onDismiss?: () => void
 }

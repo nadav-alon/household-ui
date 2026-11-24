@@ -29,6 +29,12 @@ describe('AlertBanner', () => {
     expect(screen.queryByRole('button')).toBeNull()
   })
 
+  it('rejects an action that is both a link and a button, at compile time', () => {
+    // @ts-expect-error an action is an href or an onAction, never both
+    const both = <AlertBanner message="x" action={{ label: 'Go', href: '/x', onAction: () => {} }} />
+    expect(both).toBeTruthy()
+  })
+
   it('shows a dismiss button only when given onDismiss, and calls it when pressed', () => {
     const onDismiss = vi.fn()
     const { rerender } = render(<AlertBanner message="2 urgent Items" />)
