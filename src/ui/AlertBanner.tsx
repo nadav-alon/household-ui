@@ -1,5 +1,5 @@
 import CloseIcon from '~icons/material-symbols/close'
-import { Button } from './Button.tsx'
+import { Button, buttonClass } from './Button.tsx'
 import type { ButtonAction } from './ButtonAction.ts'
 import { IconButton } from './IconButton.tsx'
 import './AlertBanner.css'
@@ -30,7 +30,7 @@ export function AlertBanner({ message, tone = 'urgent', action, onDismiss }: Ale
       <p class="ui-alert-banner__text">{message}</p>
       {action &&
         ('href' in action ? (
-          <a class="ui-button ui-button--text" href={action.href}>
+          <a class={buttonClass('text')} href={action.href}>
             {action.label}
           </a>
         ) : (

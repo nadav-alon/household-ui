@@ -12,13 +12,18 @@ export interface ButtonProps extends Omit<JSX.ButtonHTMLAttributes<HTMLButtonEle
   destructive?: boolean
 }
 
+/** The class list of a Button, for other elements that must look like one (for example a link). */
+export function buttonClass(variant: ButtonVariant = 'filled', destructive = false): string {
+  return `ui-button ui-button--${variant}${destructive ? ' ui-button--destructive' : ''}`
+}
+
 /** A native `<button>`; native focus, keyboard activation and `disabled` semantics are untouched. */
 export function Button({ variant = 'filled', destructive = false, type = 'button', ...rest }: ButtonProps) {
   return (
     <button
       {...rest}
       type={type}
-      class={`ui-button ui-button--${variant}${destructive ? ' ui-button--destructive' : ''}`}
+      class={buttonClass(variant, destructive)}
     />
   )
 }
