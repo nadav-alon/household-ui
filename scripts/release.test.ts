@@ -83,7 +83,8 @@ describe('release.sh', () => {
   })
 
   it('generates the notes when the changelog has no entry for the version', () => {
-    const { calls } = release('1.2.3', { changelog: '# Changelog\n\n## 1.2.2\n\n- Older.\n' })
+    const { run, calls } = release('1.2.3', { changelog: '# Changelog\n\n## 1.2.2\n\n- Older.\n' })
+    expect(run.status).toBe(0)
     expect(calls[1]).toMatch(/--generate-notes$/)
   })
 })
