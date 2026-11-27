@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1
+
+- `IconButton`: `title` defaults to `label`, so every icon-only button gets a hover tooltip; a caller's own
+  `title` still wins. `aria-label` is unchanged.
+
 ## 0.5.0
 
 - `AlertBanner`: `action` can be a link. Given `{ label, href }` instead of `{ label, onAction }`, it renders a
