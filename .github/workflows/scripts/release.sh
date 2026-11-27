@@ -22,6 +22,7 @@ fi
 # else GitHub's generated notes.
 notes="$(mktemp)"
 if [[ -f CHANGELOG.md ]]; then
+  # The two seds trim the blank lines after, then before, the entry.
   awk -v heading="## $version" '
     $0 == heading { inside = 1; next }
     inside && /^## / { exit }
