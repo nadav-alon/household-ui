@@ -7,7 +7,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 const script = join(import.meta.dirname, '../.github/workflows/scripts/release.sh')
 let dir: string
 
-// A `gh` that records each call to calls.log, one line per call. `gh api`
+// A `gh` that records each call to $CALLS, one line per call, and copies a
+// release's notes file to $NOTES. `gh api`
 // answers as the tag lookup: found when TAG_EXISTS is set, else a 404.
 function fakeGh() {
   mkdirSync(join(dir, 'bin'))
@@ -19,7 +20,7 @@ function fakeGh() {
       'if [[ "$1 $2" == "release create" ]]; then',
       '  args=("$@")',
       '  for i in "${!args[@]}"; do',
-      '    if [[ "${args[i]}" == --notes-file ]]; then cp "${args[i+1]}" "$(dirname "$CALLS")/notes.txt"; fi',
+      '    if [[ "${args[i]}" == --notes-file ]]; then cp "${args[i+1]}" "$NOTES"; fi',
       '  done',
       'fi',
       'if [[ "$1" == api ]]; then',
@@ -42,6 +43,7 @@ function release(version: string, { tagExists = false, changelog }: { tagExists?
       ...process.env,
       PATH: `${join(dir, 'bin')}:${process.env.PATH}`,
       CALLS: join(dir, 'calls.log'),
+      NOTES: join(dir, 'notes.txt'),
       REPO: 'owner/repo',
       SHA: 'abc123',
       ...(tagExists ? { TAG_EXISTS: '1' } : {}),
