@@ -6,7 +6,7 @@ Shared Preact UI components and Material 3 theme for the Household apps. Ships a
 ## Use
 
 ```
-npm i github:nadav-alon/household-ui#v0.5.0
+npm i github:nadav-alon/household-ui#v0.5.1
 ```
 
 The app provides `preact`, `vite` (the `household-theme` script loads through it), `unplugin-icons` (with `compiler: 'jsx', jsx: 'preact'`),
