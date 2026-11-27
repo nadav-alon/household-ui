@@ -13,6 +13,13 @@ describe('IconButton', () => {
     expect(container.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
   })
 
+  it('defaults its title to its label and leaves aria-label unchanged', () => {
+    render(<IconButton symbol={HomeIcon} label="Home" />)
+    const button = screen.getByRole('button', { name: 'Home' })
+    expect(button).toHaveAttribute('title', 'Home')
+    expect(button).toHaveAttribute('aria-label', 'Home')
+  })
+
   it('keeps native click and disabled behaviour', () => {
     const onClick = vi.fn()
     const { rerender } = render(<IconButton symbol={HomeIcon} label="Home" onClick={onClick} />)

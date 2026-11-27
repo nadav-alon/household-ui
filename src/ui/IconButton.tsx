@@ -9,10 +9,10 @@ export interface IconButtonProps
   label: string
 }
 
-/** A native `<button>` showing only an icon. */
-export function IconButton({ symbol, label, type = 'button', ...rest }: IconButtonProps) {
+/** A native `<button>` showing only an icon. Its `title` tooltip defaults to `label`; a caller's own `title` wins. */
+export function IconButton({ symbol, label, title = label, type = 'button', ...rest }: IconButtonProps) {
   return (
-    <button {...rest} type={type} aria-label={label} class="ui-icon-button">
+    <button {...rest} type={type} aria-label={label} title={title} class="ui-icon-button">
       <Icon symbol={symbol} size="1.5rem" />
     </button>
   )
