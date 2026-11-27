@@ -20,6 +20,13 @@ describe('IconButton', () => {
     expect(button).toHaveAttribute('aria-label', 'Home')
   })
 
+  it("renders a caller's own title instead of the label", () => {
+    render(<IconButton symbol={HomeIcon} label="Home" title="Go home" />)
+    const button = screen.getByRole('button', { name: 'Home' })
+    expect(button).toHaveAttribute('title', 'Go home')
+    expect(button).toHaveAttribute('aria-label', 'Home')
+  })
+
   it('keeps native click and disabled behaviour', () => {
     const onClick = vi.fn()
     const { rerender } = render(<IconButton symbol={HomeIcon} label="Home" onClick={onClick} />)
