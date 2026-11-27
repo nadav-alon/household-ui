@@ -1,0 +1,31 @@
+# Tags and releases a version bump: a push to main whose package.json version
+# has no tag yet gets tag and release `v<version>` on that commit, so consumers
+# pinning `github:nadav-alon/household-ui#vX.Y.Z` never wait on a hand-cut tag.
+# The logic is .github/workflows/scripts/release.sh.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+# Two pushes must not both pass the script's "no tag yet" read. A run in
+# progress is never cancelled.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Tag and release the version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Release the version in package.json
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: bash .github/workflows/scripts/release.sh
