@@ -16,6 +16,12 @@ function fakeGh() {
     [
       '#!/usr/bin/env bash',
       'echo "$*" >> "$CALLS"',
+      'if [[ "$1 $2" == "release create" ]]; then',
+      '  args=("$@")',
+      '  for i in "${!args[@]}"; do',
+      '    if [[ "${args[i]}" == --notes-file ]]; then cp "${args[i+1]}" "$(dirname "$CALLS")/notes.txt"; fi',
+      '  done',
+      'fi',
       'if [[ "$1" == api ]]; then',
       '  if [[ -n "${TAG_EXISTS:-}" ]]; then echo "{}"; else echo "gh: Not Found (HTTP 404)" >&2; exit 1; fi',
       'fi',
@@ -25,8 +31,9 @@ function fakeGh() {
   chmodSync(join(dir, 'bin/gh'), 0o755)
 }
 
-function release(version: string, tagExists = false) {
+function release(version: string, { tagExists = false, changelog }: { tagExists?: boolean; changelog?: string } = {}) {
   writeFileSync(join(dir, 'package.json'), JSON.stringify({ version }))
+  if (changelog !== undefined) writeFileSync(join(dir, 'CHANGELOG.md'), changelog)
   fakeGh()
   const run = spawnSync('bash', [script], {
     cwd: dir,
@@ -60,8 +67,21 @@ describe('release.sh', () => {
   })
 
   it('creates nothing and succeeds when the version already has a tag', () => {
-    const { run, calls } = release('1.2.3', true)
+    const { run, calls } = release('1.2.3', { tagExists: true })
     expect(run.status).toBe(0)
     expect(calls).toEqual(['api repos/owner/repo/git/ref/tags/v1.2.3'])
+  })
+
+  it('uses the version’s changelog entry as the release notes', () => {
+    const changelog = '# Changelog\n\n## 1.2.3\n\n- Added a thing.\n  More about it.\n\n## 1.2.2\n\n- Older.\n'
+    const { run, calls } = release('1.2.3', { changelog })
+    expect(run.status).toBe(0)
+    expect(calls[1]).toMatch(/^release create v1\.2\.3 --repo owner\/repo --target abc123 --title v1\.2\.3 --notes-file /)
+    expect(readFileSync(join(dir, 'notes.txt'), 'utf8')).toBe('- Added a thing.\n  More about it.\n')
+  })
+
+  it('generates the notes when the changelog has no entry for the version', () => {
+    const { calls } = release('1.2.3', { changelog: '# Changelog\n\n## 1.2.2\n\n- Older.\n' })
+    expect(calls[1]).toMatch(/--generate-notes$/)
   })
 })

@@ -18,4 +18,21 @@ elif ! grep -q '404' <<<"$lookup"; then
   exit 1
 fi
 
-gh release create "$tag" --repo "$REPO" --target "$SHA" --title "$tag" --generate-notes
+# The release notes are the version's CHANGELOG.md entry when there is one,
+# else GitHub's generated notes.
+notes="$(mktemp)"
+if [[ -f CHANGELOG.md ]]; then
+  awk -v heading="## $version" '
+    $0 == heading { inside = 1; next }
+    inside && /^## / { exit }
+    inside { print }
+  ' CHANGELOG.md | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' | sed '/./,$!d' >"$notes"
+fi
+
+if [[ -s "$notes" ]]; then
+  notes_args=(--notes-file "$notes")
+else
+  notes_args=(--generate-notes)
+fi
+
+gh release create "$tag" --repo "$REPO" --target "$SHA" --title "$tag" "${notes_args[@]}"
