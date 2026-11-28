@@ -2,7 +2,7 @@
 
 ## 0.8.0
 
-- `FilterChip` is a 2rem container with the small (8dp) corner; a transparent `::after` extends its hit area to at least 3rem tall without changing the layout height. `.ui-filter-chip` is now `position: relative`.
+- `FilterChip` is a 2rem container with the small (8dp) corner; a transparent `::after` extends its hit area to at least 3rem tall without changing the layout height. `.ui-filter-chip` is now `position: relative`, `box-sizing: border-box`, and `display: inline-flex` with `align-items: center` (it was the button's default inline-block), which can shift baseline alignment in a row of chips.
 - A selected `FilterChip` shows a leading 18dp check icon, hidden from assistive tech; padding is 8dp before the icon, 16dp without it, 16dp trailing.
 
 ## 0.7.0
