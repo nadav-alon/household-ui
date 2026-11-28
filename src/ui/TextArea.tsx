@@ -10,7 +10,7 @@ export interface TextAreaProps extends Omit<JSX.TextareaHTMLAttributes<HTMLTextA
 }
 
 /** A native `<textarea>` styled and labelled like a TextField, with an optional error message. */
-export function TextArea({ label, error, id, 'aria-describedby': describedBy, placeholder = ' ', ...rest }: TextAreaProps) {
+export function TextArea({ label, error, id, 'aria-describedby': describedBy, placeholder, ...rest }: TextAreaProps) {
   const generatedId = useUniqueId()
   const areaId = id ?? generatedId
   const field = useFieldError(areaId, error, describedBy)
@@ -25,7 +25,7 @@ export function TextArea({ label, error, id, 'aria-describedby': describedBy, pl
           {...rest}
           id={areaId}
           class="ui-field__control ui-field__control--multiline"
-          placeholder={placeholder}
+          placeholder={placeholder || ' '}
           aria-invalid={field.invalid}
           aria-describedby={field.describedBy}
         />

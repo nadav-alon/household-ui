@@ -44,8 +44,10 @@ describe.each([
 
 describe('Field label', () => {
   it('rests in body-large and floats into the outline in body-small when focused or populated', () => {
+    // `declaration` matches the selector as a suffix too and takes the last rule, so read the resting rule by its start of line.
     const rest = read(css).match(/^\.ui-field__label {([^}]*)}/m)![1]!
-    for (const [property, value] of Object.entries(typeRoleDeclarations('body-large'))) expect(rest).toContain(`${property}: ${value};`)
+    const restType = Object.fromEntries(Object.keys(typeRoleDeclarations('body-large')).map((property) => [property, rest.match(new RegExp(`^\\s*${property}:\\s*([^;]+);`, 'm'))?.[1]]))
+    expect(restType).toEqual(typeRoleDeclarations('body-large'))
     const floated = '.ui-field__control:is(:focus, :not(:placeholder-shown)) ~ .ui-field__label'
     expect(declaration(css, floated, 'top')).toBe('0')
     expect(typeDeclarations(css, floated)).toEqual(typeRoleDeclarations('body-small'))
@@ -55,6 +57,20 @@ describe('Field label', () => {
     render(<TextField label="Name" />)
     expect(screen.getByLabelText('Name')).toHaveAttribute('placeholder', ' ')
     expect(declaration(css, '.ui-field__control:not(:focus)::placeholder', 'color')).toBe('transparent')
+  })
+
+  it('sets the notch to the same type as the floated label, so the gap fits it', () => {
+    expect(typeDeclarations(css, '.ui-field__notch')).toEqual(typeRoleDeclarations('body-small'))
+  })
+
+  it.each([
+    ['TextField', <TextField label="Name" placeholder="" />],
+    ['TextArea', <TextArea label="Name" placeholder="" />],
+    ['TextField', <TextField label="Name" />],
+    ['TextArea', <TextArea label="Name" />],
+  ])('%s with no or an empty placeholder still has one, so :placeholder-shown tracks emptiness', (_name, ui) => {
+    render(ui)
+    expect(screen.getByLabelText('Name')).toHaveAttribute('placeholder', ' ')
   })
 
   it('keeps a caller placeholder', () => {

@@ -10,7 +10,7 @@ export interface TextFieldProps extends Omit<JSX.InputHTMLAttributes<HTMLInputEl
 }
 
 /** A native `<input>` in an outlined container, labelled by a `<label>` that floats when it is focused or filled, with an optional error message. */
-export function TextField({ label, error, id, 'aria-describedby': describedBy, placeholder = ' ', ...rest }: TextFieldProps) {
+export function TextField({ label, error, id, 'aria-describedby': describedBy, placeholder, ...rest }: TextFieldProps) {
   const generatedId = useUniqueId()
   const inputId = id ?? generatedId
   const field = useFieldError(inputId, error, describedBy)
@@ -25,7 +25,7 @@ export function TextField({ label, error, id, 'aria-describedby': describedBy, p
           {...rest}
           id={inputId}
           class="ui-field__control"
-          placeholder={placeholder}
+          placeholder={placeholder || ' '}
           aria-invalid={field.invalid}
           aria-describedby={field.describedBy}
         />
