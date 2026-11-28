@@ -29,4 +29,6 @@
 .ui-filter-chip[aria-pressed='true'] {
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
+  gap: var(--md-sys-spacing-2);
+  padding-inline-start: var(--md-sys-spacing-2);
 }

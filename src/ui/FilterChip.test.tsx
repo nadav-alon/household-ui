@@ -55,3 +55,23 @@ describe('FilterChip size', () => {
     expect(declaration(css, hit, 'transform')).toBe('translateY(-50%)')
   })
 })
+
+describe('FilterChip check icon', () => {
+  it('shows a hidden leading check only while selected', () => {
+    const { container, rerender } = render(<FilterChip label="Pharmacy" selected={false} onToggle={() => {}} />)
+    expect(container.querySelector('svg')).toBeNull()
+
+    rerender(<FilterChip label="Pharmacy" selected onToggle={() => {}} />)
+    const button = screen.getByRole('button', { name: 'Pharmacy', pressed: true })
+    const icon = button.querySelector('svg')
+    expect(icon).toHaveAttribute('aria-hidden', 'true')
+    expect(icon).toHaveAttribute('width', '1.125rem')
+    expect(button.firstElementChild).toBe(icon)
+  })
+
+  it('pads 8dp before the icon, 16dp without it, 16dp trailing', () => {
+    const css = 'src/ui/FilterChip.css'
+    expect(declaration(css, '.ui-filter-chip', 'padding-inline')).toBe('var(--md-sys-spacing-4)')
+    expect(declaration(css, ".ui-filter-chip[aria-pressed='true']", 'padding-inline-start')).toBe('var(--md-sys-spacing-2)')
+  })
+})
