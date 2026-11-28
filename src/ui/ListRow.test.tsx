@@ -121,6 +121,60 @@ describe('ListRow', () => {
     expect(rule).toMatch(/padding: var\(--md-sys-spacing-2\) 0/)
   })
 
+  describe('height', () => {
+    // The label and the link share one rule; it is matched whole, so the order of the two-line rule does not change the result.
+    const sharedBoxRule = /\.ui-list-row__label,\s*\.ui-list-row__link\s*{[^}]*min-height: 3\.5rem[^}]*}/
+
+    it('is 3.5rem for one line in every kind of row, with padding inside the box', () => {
+      expect(declaration(stylesheet, '.ui-list-row', 'min-height')).toBe('3.5rem')
+      expect(declaration(stylesheet, '.ui-list-row', 'box-sizing')).toBe('border-box')
+      expect(read(stylesheet).match(sharedBoxRule)?.[0]).toMatch(/box-sizing: border-box/)
+      expect(declaration(stylesheet, '.ui-list-row__activate', 'box-sizing')).toBe('border-box')
+    })
+
+    it('is 4.5rem for a row with supporting text', () => {
+      render(
+        <ul>
+          <ListRow headline="Milk" supporting="Grocery" />
+          <ListRow headline="Eggs" />
+          <ListRow headline="Bread" supporting="Bakery" href="/bread" onFollow={() => {}} />
+          <ListRow headline="Rice" supporting="Pantry" control={<input type="checkbox" />} />
+          <ListRow headline="Tea" supporting="Drinks" onActivate={() => {}} />
+        </ul>,
+      )
+      const [milk, eggs, ...twoLine] = screen.getAllByRole('listitem')
+      expect(milk).toHaveClass('ui-list-row--two-line')
+      expect(eggs).not.toHaveClass('ui-list-row--two-line')
+      for (const row of twoLine) expect(row).toHaveClass('ui-list-row--two-line')
+      expect(read(stylesheet)).toMatch(
+        /\.ui-list-row\.ui-list-row--two-line,\s*\.ui-list-row--two-line \.ui-list-row__label,\s*\.ui-list-row--two-line \.ui-list-row__link\s*{[^}]*min-height: 4\.5rem/,
+      )
+    })
+  })
+
+  it('paints nothing of its own, so it takes its container\'s colour', () => {
+    expect(declaration(stylesheet, '.ui-list-row', 'background')).toBe('transparent')
+  })
+
+  it('sets a muted headline in on-surface-variant, never italic', () => {
+    const selector = '.ui-list-row--muted .ui-list-row__headline'
+    expect(declaration(stylesheet, selector, 'color')).toBe('var(--md-sys-color-on-surface-variant)')
+    expect(declaration(stylesheet, selector, 'font-style')).toBeUndefined()
+    expect(read(stylesheet)).not.toMatch(/italic/)
+  })
+
+  it('renders an SVG placed directly in the trailing slot 1.5rem square, as a block', () => {
+    const svg = '.ui-list-row__trailing > svg'
+    expect(declaration(stylesheet, svg, 'display')).toBe('block')
+    expect(declaration(stylesheet, svg, 'width')).toBe('1.5rem')
+    expect(declaration(stylesheet, svg, 'height')).toBe('1.5rem')
+  })
+
+  it('centres the trailing slot vertically in every kind of row', () => {
+    expect(declaration(stylesheet, '.ui-list-row', 'align-items')).toBe('center')
+    expect(declaration(stylesheet, '.ui-list-row__link', 'align-items')).toBe('center')
+  })
+
   it('applies no hover highlight outside the hover-capable media query, nor to a plain row', () => {
     expect(outsideHoverBlock()).not.toMatch(/:hover/)
     const hovered = [...hoverBlock().matchAll(/([^{}]+){/g)].flatMap((m) => m[1].split(',').map((selector) => selector.trim()))

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0
+
+- `ListRow` is 56dp with one line of text and 72dp with two, in every kind of row: plain, link, control and `onActivate`. Padding no longer adds to the minimum height, and a row with supporting text carries `ui-list-row--two-line`.
+- `ListRow` is transparent on its container rather than painting `surface`.
+- A `muted` `ListRow` headline is no longer italic; it stays on-surface-variant.
+- An SVG in a `ListRow`'s trailing slot is 1.5rem square, as a block.
+
 ## 0.6.1
 
 - `Button`: every `.ui-button`, in each variant and in its anchor form, has a touch target of at least 48dp

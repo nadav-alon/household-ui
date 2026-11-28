@@ -1,10 +1,18 @@
+/* Declared before the one-line rules, which the higher specificity here overrides. M3 list items are 56dp with one line of text and 72dp with two. */
+.ui-list-row.ui-list-row--two-line,
+.ui-list-row--two-line .ui-list-row__label,
+.ui-list-row--two-line .ui-list-row__link {
+  min-height: 4.5rem;
+}
+
 .ui-list-row {
   display: flex;
   align-items: center;
   gap: var(--md-sys-spacing-4);
+  box-sizing: border-box;
   min-height: 3.5rem;
   padding: var(--md-sys-spacing-2) 0;
-  background: var(--md-sys-color-surface);
+  background: transparent;
   color: var(--md-sys-color-on-surface);
 }
 
@@ -35,9 +43,14 @@
   color: var(--md-sys-color-on-surface-variant);
 }
 
+.ui-list-row__trailing > svg {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .ui-list-row--muted .ui-list-row__headline {
   color: var(--md-sys-color-on-surface-variant);
-  font-style: italic;
 }
 
 .ui-list-row--labelled {
@@ -50,6 +63,7 @@
   flex: 1;
   align-items: center;
   gap: var(--md-sys-spacing-4);
+  box-sizing: border-box;
   min-height: 3.5rem;
   padding: var(--md-sys-spacing-2) 0;
 }
@@ -64,6 +78,7 @@
   /* Stretch over the row's own vertical padding so the hover layer covers the row's full height. */
   align-self: stretch;
   margin: calc(-1 * var(--md-sys-spacing-2)) 0;
+  box-sizing: border-box;
   padding: var(--md-sys-spacing-2) 0;
   border: 0;
   background: none;
