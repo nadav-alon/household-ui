@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { SegmentedButton } from './SegmentedButton.tsx'
-import { tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
+import { declaration, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
+
+const stylesheet = 'src/ui/SegmentedButton.css'
+const option = '.ui-segmented__option'
 
 const options = [
   { value: 'enough', label: 'Enough' },
@@ -33,7 +36,7 @@ describe('SegmentedButton', () => {
   })
 
   it('is styled only from defined tokens', () => {
-    const { used, undefinedTokens } = tokenUsage('src/ui/SegmentedButton.css')
+    const { used, undefinedTokens } = tokenUsage(stylesheet)
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
   })
@@ -41,6 +44,46 @@ describe('SegmentedButton', () => {
 
 describe('SegmentedButton label type', () => {
   it('is set in label-large', () => {
-    expect(typeDeclarations('src/ui/SegmentedButton.css', '.ui-segmented__option')).toEqual(typeRoleDeclarations('label-large'))
+    expect(typeDeclarations(stylesheet, option)).toEqual(typeRoleDeclarations('label-large'))
+  })
+})
+
+describe('SegmentedButton size', () => {
+  it('is a 2.5rem container', () => {
+    expect(declaration(stylesheet, option, 'box-sizing')).toBe('border-box')
+    expect(declaration(stylesheet, option, 'height')).toBe('2.5rem')
+  })
+
+  it('extends the hit area to at least 3rem tall, centred, without changing layout', () => {
+    const hitArea = `${option}::after`
+    expect(declaration(stylesheet, option, 'position')).toBe('relative')
+    expect(declaration(stylesheet, hitArea, 'content')).toBe("''")
+    expect(declaration(stylesheet, hitArea, 'position')).toBe('absolute')
+    expect(declaration(stylesheet, hitArea, 'top')).toBe('50%')
+    expect(declaration(stylesheet, hitArea, 'left')).toBe('0')
+    expect(declaration(stylesheet, hitArea, 'width')).toBe('100%')
+    expect(declaration(stylesheet, hitArea, 'height')).toBe('max(100%, 3rem)')
+    expect(declaration(stylesheet, hitArea, 'transform')).toBe('translateY(-50%)')
+  })
+})
+
+describe('SegmentedButton check icon', () => {
+  it('shows a hidden leading check on the selected segment only', () => {
+    render(<SegmentedButton label="State" options={options} value="low" onChange={() => {}} />)
+    const selected = screen.getByRole('button', { name: 'Running low', pressed: true })
+    const icon = selected.querySelector('svg')
+    expect(icon).toHaveAttribute('aria-hidden', 'true')
+    expect(icon).toHaveAttribute('width', '1.125rem')
+    expect(icon).toHaveAttribute('height', '1.125rem')
+    expect(selected.firstElementChild).toBe(icon)
+    expect(screen.getByRole('button', { name: 'Enough' }).querySelector('svg')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Out' }).querySelector('svg')).toBeNull()
+  })
+
+  it('centres the icon beside the label with an 8dp gap', () => {
+    expect(declaration(stylesheet, option, 'display')).toBe('inline-flex')
+    expect(declaration(stylesheet, option, 'align-items')).toBe('center')
+    expect(declaration(stylesheet, option, 'justify-content')).toBe('center')
+    expect(declaration(stylesheet, option, 'gap')).toBe('var(--md-sys-spacing-2)')
   })
 })
