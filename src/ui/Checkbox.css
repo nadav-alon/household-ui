@@ -61,6 +61,14 @@
   background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
 }
 
+.ui-checkbox__input:active ~ .ui-checkbox__layer {
+  background: color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent);
+}
+
+.ui-checkbox__input:checked:active ~ .ui-checkbox__layer {
+  background: color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent);
+}
+
 @media (hover: hover) {
   .ui-checkbox__input:hover ~ .ui-checkbox__layer {
     background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);

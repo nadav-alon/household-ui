@@ -76,6 +76,13 @@ describe('Checkbox state layer and hit area', () => {
     expect(declaration(stylesheet, '.ui-checkbox__input:checked:focus-visible ~ .ui-checkbox__layer', 'background')).toBe(primary8)
   })
 
+  it('shows at 10% on press, outside (hover: hover) so touch devices get it', () => {
+    const pressed = (selector: string) => declaration(stylesheet, `.ui-checkbox__input:${selector} ~ .ui-checkbox__layer`, 'background')
+    expect(pressed('active')).toBe('color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent)')
+    expect(pressed('checked:active')).toBe('color-mix(in srgb, var(--md-sys-color-primary) 10%, transparent)')
+    expect(mediaBlock(stylesheet, '(hover: hover)')).not.toMatch(/:active/)
+  })
+
   it('shows on hover only inside (hover: hover)', () => {
     expect(outsideMediaBlock(stylesheet, '(hover: hover)')).not.toMatch(/:hover/)
     const hover = mediaBlock(stylesheet, '(hover: hover)')
