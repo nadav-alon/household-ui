@@ -3,6 +3,7 @@
 }
 
 .ui-segmented__option {
+  position: relative;
   min-height: 2.5rem;
   padding: 0 var(--md-sys-spacing-4);
   border: 1px solid var(--md-sys-color-outline);
@@ -31,4 +32,14 @@
 .ui-segmented__option[aria-pressed='true'] {
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
+}
+
+.ui-segmented__option::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: max(100%, 3rem);
+  transform: translateY(-50%);
 }
