@@ -1,6 +1,7 @@
+import { execSync } from 'node:child_process'
 import { describe, expect, it } from 'vitest'
 import { colourRoleProperty } from './colourRoles.ts'
-import { defined, read, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
+import { defined, read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('design tokens', () => {
   it('define type, spacing, shape and elevation scales', () => {
@@ -42,6 +43,15 @@ describe('design tokens', () => {
 
   it('sets the body in body-large', () => {
     expect(typeDeclarations('src/ui/base.css', 'body')).toEqual(typeRoleDeclarations('body-large'))
+  })
+
+  it('drops the one-size-per-family tokens and the global line height, and no kit stylesheet reads an undefined token', () => {
+    for (const removed of ['display', 'headline', 'title', 'body', 'label'].map((family) => `--md-sys-typescale-${family}-size`).concat('--md-sys-typescale-line-height')) {
+      expect(defined).not.toContain(removed)
+    }
+    const stylesheets = execSync('git ls-files "*.css"', { encoding: 'utf8' }).trim().split('\n')
+    expect(stylesheets.length).toBeGreaterThan(10)
+    for (const stylesheet of stylesheets) expect(tokenUsage(stylesheet).undefinedTokens, stylesheet).toEqual([])
   })
 
   it('elevation shadows use a defined colour role', () => {
