@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact'
-import { read, tokenUsage } from '../testing/css.ts'
+import { read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 import { AlertBanner } from './AlertBanner.tsx'
 
 afterEach(cleanup)
@@ -63,5 +63,11 @@ describe('AlertBanner', () => {
       ]),
     )
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('AlertBanner text type', () => {
+  it('is set in body-medium', () => {
+    expect(typeDeclarations('src/ui/AlertBanner.css', '.ui-alert-banner__text')).toEqual(typeRoleDeclarations('body-medium'))
   })
 })

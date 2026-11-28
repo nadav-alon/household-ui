@@ -10,6 +10,10 @@
 .ui-alert-banner__text {
   flex: 1;
   margin: 0;
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
 }
 
 .ui-alert-banner .ui-button--text,
