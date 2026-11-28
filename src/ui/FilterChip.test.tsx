@@ -36,7 +36,7 @@ describe('FilterChip label type', () => {
   })
 })
 
-
+describe('FilterChip size', () => {
   it('is a 2rem container with the small corner', () => {
     expect(declaration(stylesheet, '.ui-filter-chip', 'box-sizing')).toBe('border-box')
     expect(declaration(stylesheet, '.ui-filter-chip', 'height')).toBe('2rem')
@@ -71,7 +71,6 @@ describe('FilterChip check icon', () => {
     expect(button.firstElementChild).toBe(icon)
   })
   it('pads 8dp before the icon, 16dp without it, 16dp trailing', () => {
-
     expect(declaration(stylesheet, '.ui-filter-chip', 'padding-inline')).toBe('var(--md-sys-spacing-4)')
     expect(declaration(stylesheet, ".ui-filter-chip[aria-pressed='true']", 'padding-inline-start')).toBe('var(--md-sys-spacing-2)')
     expect(declaration(stylesheet, ".ui-filter-chip[aria-pressed='true']", 'padding-inline-end')).toBeUndefined()
