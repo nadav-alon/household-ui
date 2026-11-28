@@ -70,3 +70,23 @@
     background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
   }
 }
+
+.ui-checkbox {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: 3rem;
+  color: var(--md-sys-color-on-surface);
+}
+
+.ui-checkbox--labelled {
+  gap: var(--md-sys-spacing-2);
+  cursor: pointer;
+}
+
+.ui-checkbox__label {
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+}

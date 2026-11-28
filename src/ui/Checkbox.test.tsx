@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { Checkbox } from './Checkbox.tsx'
-import { declaration, mediaBlock, outsideMediaBlock, read, tokenUsage } from '../testing/css.ts'
+import { declaration, mediaBlock, outsideMediaBlock, read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('Checkbox', () => {
   it('is a native checkbox named by its label', () => {
@@ -89,5 +89,27 @@ describe('Checkbox state layer and hit area', () => {
     expect(declaration(stylesheet, '.ui-checkbox__input', 'inset')).toBe('0')
     expect(declaration(stylesheet, '.ui-checkbox__input', 'width')).toBe('100%')
     expect(declaration(stylesheet, '.ui-checkbox__input', 'height')).toBe('100%')
+  })
+})
+
+describe('Checkbox label', () => {
+  it('toggles the box when the label is tapped', () => {
+    render(<Checkbox label="Sort by aisle" />)
+    const box = screen.getByRole('checkbox', { name: 'Sort by aisle' })
+
+    fireEvent.click(screen.getByText('Sort by aisle'))
+
+    expect(box).toBeChecked()
+  })
+
+  it('is a row at least 3rem tall, with its text in body-large', () => {
+    expect(declaration(stylesheet, '.ui-checkbox', 'min-height')).toBe('3rem')
+    expect(declaration(stylesheet, '.ui-checkbox', 'box-sizing')).toBe('border-box')
+    expect(typeDeclarations(stylesheet, '.ui-checkbox__label')).toEqual(typeRoleDeclarations('body-large'))
+  })
+
+  it('renders no label element without a label, so it can sit inside one', () => {
+    const { container } = render(<Checkbox aria-label="Assumed" />)
+    expect(container.querySelector('label')).toBeNull()
   })
 })
