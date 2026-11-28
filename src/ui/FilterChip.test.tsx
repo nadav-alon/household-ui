@@ -38,6 +38,7 @@ describe('FilterChip size', () => {
   const css = 'src/ui/FilterChip.css'
 
   it('is a 2rem container with the small corner', () => {
+    expect(declaration(css, '.ui-filter-chip', 'box-sizing')).toBe('border-box')
     expect(declaration(css, '.ui-filter-chip', 'height')).toBe('2rem')
     expect(declaration(css, '.ui-filter-chip', 'min-height')).toBeUndefined()
     expect(declaration(css, '.ui-filter-chip', 'border-radius')).toBe('var(--md-sys-shape-corner-small)')
