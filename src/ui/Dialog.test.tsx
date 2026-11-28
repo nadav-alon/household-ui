@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact'
 import { Dialog } from './Dialog.tsx'
 import { declaration, mediaBlock, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
-import { stubModalDialog } from '../testing/dialog.ts'
+import { DialogActions } from './DialogActions.tsx'
+import { stubModalDialog, stubViewport } from '../testing/dialog.ts'
 
 beforeEach(stubModalDialog)
 
@@ -272,6 +273,92 @@ describe('Dialog', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/Dialog.css')
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+
+  describe('full-screen', () => {
+    const renderFullScreen = (onClose = () => {}, hasUnsavedEdits = false) =>
+      render(
+        <Dialog
+          open
+          variant="full-screen"
+          title="New item"
+          onClose={onClose}
+          hasUnsavedEdits={hasUnsavedEdits}
+          confirm={<button type="submit">Save</button>}
+        >
+          <form>
+            <DialogActions destructive={<button type="button">Delete</button>}>
+              <button type="button">Cancel</button>
+            </DialogActions>
+          </form>
+        </Dialog>,
+      )
+
+    it('below 600px fills the viewport with Close, the title and the confirm content in that order', () => {
+      stubViewport(412)
+      renderFullScreen()
+      const dialog = screen.getByRole('dialog')
+      expect(dialog).toHaveClass('ui-dialog--full-screen')
+      const header = screen.getByRole('heading', { name: 'New item' }).parentElement!
+      expect(header.children).toHaveLength(3)
+      expect(header.children[1]).toBe(screen.getByRole('heading', { name: 'New item' }))
+      expect(header.firstElementChild).toBe(screen.getByRole('button', { name: 'Close' }))
+      expect(header.lastElementChild).toBe(screen.getByRole('button', { name: 'Save' }))
+    })
+
+    it('fills the viewport edge to edge with no corners and a title-large title', () => {
+      const rule = (selector: string, property: string) => declaration('src/ui/Dialog.css', selector, property)
+      expect(rule('.ui-dialog--full-screen', 'width')).toBe('100%')
+      expect(rule('.ui-dialog--full-screen', 'height')).toBe('100%')
+      expect(rule('.ui-dialog--full-screen', 'margin')).toBe('0')
+      expect(rule('.ui-dialog--full-screen', 'border-radius')).toBe('0')
+      expect(typeDeclarations('src/ui/Dialog.css', '.ui-dialog__title--large')).toMatchObject(
+        typeRoleDeclarations('title-large'),
+      )
+    })
+
+    it('asks to close from Close the way Escape does, confirming a discard first', () => {
+      stubViewport(412)
+      const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false)
+      const onClose = vi.fn()
+      renderFullScreen(onClose, true)
+      fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+      expect(confirmSpy).toHaveBeenCalledOnce()
+      expect(onClose).not.toHaveBeenCalled()
+      confirmSpy.mockReturnValue(true)
+      fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+      expect(onClose).toHaveBeenCalledOnce()
+      confirmSpy.mockRestore()
+    })
+
+    it('hides the main part of a DialogActions row below 600px and keeps the destructive action', () => {
+      stubViewport(412)
+      renderFullScreen()
+      expect(declaration('src/ui/Dialog.css', '.ui-dialog--full-screen .ui-dialog-actions__main', 'display')).toBe('none')
+      expect(screen.getByRole('dialog')).toHaveClass('ui-dialog--full-screen')
+      expect(declaration('src/ui/Dialog.css', '.ui-dialog--full-screen .ui-dialog-actions__destructive', 'display')).toBeUndefined()
+    })
+
+    it('from 600px up is a basic dialog: no Close, no confirm, the actions row shown', () => {
+      stubViewport(600)
+      renderFullScreen()
+      expect(screen.getByRole('dialog')).not.toHaveClass('ui-dialog--full-screen')
+      expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+      expect(typeDeclarations('src/ui/Dialog.css', '.ui-dialog__title')).toEqual(typeRoleDeclarations('headline-small'))
+    })
+
+    it('stays a basic dialog below 600px unless it opts in', () => {
+      stubViewport(412)
+      render(
+        <Dialog open title="New item" onClose={() => {}} confirm={<button type="submit">Save</button>}>
+          x
+        </Dialog>,
+      )
+      expect(screen.getByRole('dialog')).not.toHaveClass('ui-dialog--full-screen')
+      expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
+    })
   })
 
   describe('holding unsaved edits', () => {

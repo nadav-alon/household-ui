@@ -32,3 +32,30 @@
   font-weight: var(--md-sys-typescale-headline-small-weight);
   letter-spacing: var(--md-sys-typescale-headline-small-tracking);
 }
+
+/* Full-screen below 600px: the viewport, edge to edge. The header is Close, the title and the confirm button; Close and confirm
+   replace the action row's Cancel and Save, so its main part is hidden and a destructive action stays. */
+.ui-dialog--full-screen {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  border-radius: 0;
+}
+
+.ui-dialog--full-screen .ui-dialog__header {
+  justify-content: flex-start;
+}
+
+.ui-dialog__title--large {
+  flex: 1;
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  letter-spacing: var(--md-sys-typescale-title-large-tracking);
+}
+
+.ui-dialog--full-screen .ui-dialog-actions__main {
+  display: none;
+}

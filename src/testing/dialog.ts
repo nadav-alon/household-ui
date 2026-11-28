@@ -15,3 +15,18 @@ export function stubModalDialog(): void {
 export function actionLabels(dialog: HTMLElement): string[] {
   return [...dialog.querySelectorAll('form button')].map((button) => button.textContent ?? '')
 }
+
+/** Test-only: jsdom has no `matchMedia`; answers `(min-width: Npx)` and `(max-width: Npx)` queries for a viewport of `width` px. */
+export function stubViewport(width: number): void {
+  window.matchMedia = vi.fn((query: string) => {
+    const bound = /\((min|max)-width:\s*([\d.]+)px\)/.exec(query)
+    const limit = Number(bound?.[2])
+    const matches = bound?.[1] === 'min' ? width >= limit : width <= limit
+    return {
+      matches,
+      media: query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    } as unknown as MediaQueryList
+  })
+}

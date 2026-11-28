@@ -1,7 +1,10 @@
 import type { ComponentChildren } from 'preact'
 import { useLayoutEffect, useRef } from 'preact/hooks'
+import { useMediaQuery } from './useMediaQuery.ts'
 import { useUniqueId } from './useUniqueId.ts'
 import { afterPendingPop, popEntry } from './pendingPop.ts'
+import { IconButton } from './IconButton.tsx'
+import CloseIcon from '~icons/material-symbols/close'
 import './Dialog.css'
 
 export interface DialogProps {
@@ -14,8 +17,14 @@ export interface DialogProps {
   class?: string
   /** Content holds edits that closing would lose: every way of closing first asks to confirm discarding them, and only calls `onClose` when confirmed. */
   hasUnsavedEdits?: boolean
-  /** `basic` (the default) is a centred 280–560dp dialog at every width; the caller's actions dismiss it, so it has no Close icon. */
+  /**
+   * `basic` (the default) is a centred 280–560dp dialog at every width; the caller's actions dismiss it, so it has no Close icon.
+   * `full-screen` is for long forms: below 600px it fills the viewport, with Close, the title and `confirm` in one header row
+   * and the main part of any `DialogActions` row hidden; from 600px up it is a basic dialog.
+   */
   variant?: 'basic' | 'full-screen'
+  /** Full-screen below 600px only: the confirming text button at the end of the header row, such as a submit button with `form=`. */
+  confirm?: ComponentChildren
   children: ComponentChildren
 }
 
@@ -35,8 +44,9 @@ function isBackdropPoint(event: MouseEvent & { currentTarget: HTMLDialogElement 
  * Each dialog tags its entry with its own id and only pops an entry it still owns, and a dialog
  * opening while another's pop is in flight waits for that pop to land before pushing its own entry.
  */
-export function Dialog({ open, title, onClose, class: className, hasUnsavedEdits, children }: DialogProps) {
+export function Dialog({ open, title, onClose, class: className, variant = 'basic', confirm: confirmAction, hasUnsavedEdits, children }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null)
+  const fullScreen = useMediaQuery('(max-width: 599.98px)') && variant === 'full-screen'
   const titleId = useUniqueId()
   const entryId = useUniqueId()
   const onCloseRef = useRef(onClose)
@@ -98,7 +108,7 @@ export function Dialog({ open, title, onClose, class: className, hasUnsavedEdits
   return (
     <dialog
       ref={ref}
-      class={className ? `ui-dialog ${className}` : 'ui-dialog'}
+      class={['ui-dialog', fullScreen && 'ui-dialog--full-screen', className].filter(Boolean).join(' ')}
       aria-labelledby={titleId}
       onCancel={(event) => {
         // Uncancelable, the browser closes the dialog regardless and the close handler asks.
@@ -124,9 +134,11 @@ export function Dialog({ open, title, onClose, class: className, hasUnsavedEdits
       }}
     >
       <div class="ui-dialog__header">
-        <h2 class="ui-dialog__title" id={titleId}>
+        {fullScreen && <IconButton symbol={CloseIcon} label="Close" onClick={requestClose} />}
+        <h2 class={fullScreen ? "ui-dialog__title ui-dialog__title--large" : "ui-dialog__title"} id={titleId}>
           {title}
         </h2>
+        {fullScreen && confirmAction}
       </div>
       {children}
     </dialog>
