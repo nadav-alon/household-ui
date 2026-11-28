@@ -25,8 +25,10 @@
 
 .ui-dialog__title {
   margin: 0;
-  font-size: var(--md-sys-typescale-headline-size);
-  font-weight: 400;
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  font-weight: var(--md-sys-typescale-headline-small-weight);
+  letter-spacing: var(--md-sys-typescale-headline-small-tracking);
 }
 
 @media (min-width: 600px) {
