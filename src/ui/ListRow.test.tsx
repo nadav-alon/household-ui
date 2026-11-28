@@ -161,6 +161,18 @@ describe('ListRow', () => {
     expect(read(stylesheet)).not.toMatch(/italic/)
   })
 
+  it('renders a trailing SVG 1.5rem square, as a block', () => {
+    const svg = '.ui-list-row__trailing svg'
+    expect(declaration(stylesheet, svg, 'display')).toBe('block')
+    expect(declaration(stylesheet, svg, 'width')).toBe('1.5rem')
+    expect(declaration(stylesheet, svg, 'height')).toBe('1.5rem')
+  })
+
+  it('centres the trailing slot vertically in every kind of row', () => {
+    expect(declaration(stylesheet, '.ui-list-row', 'align-items')).toBe('center')
+    expect(declaration(stylesheet, '.ui-list-row__link', 'align-items')).toBe('center')
+  })
+
   it('applies no hover highlight outside the hover-capable media query, nor to a plain row', () => {
     expect(outsideHoverBlock()).not.toMatch(/:hover/)
     const hovered = [...hoverBlock().matchAll(/([^{}]+){/g)].flatMap((m) => m[1].split(',').map((selector) => selector.trim()))
