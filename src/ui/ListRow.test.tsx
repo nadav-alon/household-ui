@@ -122,15 +122,13 @@ describe('ListRow', () => {
   })
 
   describe('height', () => {
-    // The label and the link share one rule, which the link's selector ends.
-    const boxes = ['.ui-list-row', '.ui-list-row__link']
+    // The label and the link share one rule; it is matched whole, so the order of the two-line rule does not change the result.
+    const sharedBoxRule = /\.ui-list-row__label,\s*\.ui-list-row__link\s*{[^}]*min-height: 3\.5rem[^}]*}/
 
     it('is 3.5rem for one line in every kind of row, with padding inside the box', () => {
-      for (const selector of boxes) {
-        expect(declaration(stylesheet, selector, 'min-height')).toBe('3.5rem')
-        expect(declaration(stylesheet, selector, 'box-sizing')).toBe('border-box')
-      }
-      expect(read(stylesheet)).toMatch(/\.ui-list-row__label,\s*\.ui-list-row__link\s*{[^}]*box-sizing: border-box/)
+      expect(declaration(stylesheet, '.ui-list-row', 'min-height')).toBe('3.5rem')
+      expect(declaration(stylesheet, '.ui-list-row', 'box-sizing')).toBe('border-box')
+      expect(read(stylesheet).match(sharedBoxRule)?.[0]).toMatch(/box-sizing: border-box/)
       expect(declaration(stylesheet, '.ui-list-row__activate', 'box-sizing')).toBe('border-box')
     })
 
@@ -139,11 +137,15 @@ describe('ListRow', () => {
         <ul>
           <ListRow headline="Milk" supporting="Grocery" />
           <ListRow headline="Eggs" />
+          <ListRow headline="Bread" supporting="Bakery" href="/bread" onFollow={() => {}} />
+          <ListRow headline="Rice" supporting="Pantry" control={<input type="checkbox" />} />
+          <ListRow headline="Tea" supporting="Drinks" onActivate={() => {}} />
         </ul>,
       )
-      const [milk, eggs] = screen.getAllByRole('listitem')
+      const [milk, eggs, ...twoLine] = screen.getAllByRole('listitem')
       expect(milk).toHaveClass('ui-list-row--two-line')
       expect(eggs).not.toHaveClass('ui-list-row--two-line')
+      for (const row of twoLine) expect(row).toHaveClass('ui-list-row--two-line')
       expect(read(stylesheet)).toMatch(
         /\.ui-list-row\.ui-list-row--two-line,\s*\.ui-list-row--two-line \.ui-list-row__label,\s*\.ui-list-row--two-line \.ui-list-row__link\s*{[^}]*min-height: 4\.5rem/,
       )
