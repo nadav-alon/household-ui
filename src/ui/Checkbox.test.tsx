@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { Checkbox } from './Checkbox.tsx'
-import { declaration, tokenUsage } from '../testing/css.ts'
+import { declaration, mediaBlock, outsideMediaBlock, read, tokenUsage } from '../testing/css.ts'
 
 describe('Checkbox', () => {
   it('is a native checkbox named by its label', () => {
@@ -55,5 +55,39 @@ describe('Checkbox box', () => {
     const { used, undefinedTokens } = tokenUsage(stylesheet)
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('Checkbox state layer and hit area', () => {
+  const layer = '.ui-checkbox__layer'
+  const onSurface8 = 'color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent)'
+  const primary8 = 'color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent)'
+
+  it('has a 2.5rem round layer that is clear until hovered or focused', () => {
+    expect(declaration(stylesheet, layer, 'width')).toBe('2.5rem')
+    expect(declaration(stylesheet, layer, 'height')).toBe('2.5rem')
+    expect(declaration(stylesheet, layer, 'border-radius')).toBe('var(--md-sys-shape-corner-full)')
+    expect(read(stylesheet)).toMatch(/^\.ui-checkbox__layer {[^}]*background: transparent;/m)
+  })
+
+  it('shows on-surface at 8% on focus-visible, primary when checked', () => {
+    const focused = '.ui-checkbox__input:focus-visible ~ .ui-checkbox__layer'
+    expect(declaration(stylesheet, focused, 'background')).toBe(onSurface8)
+    expect(declaration(stylesheet, '.ui-checkbox__input:checked:focus-visible ~ .ui-checkbox__layer', 'background')).toBe(primary8)
+  })
+
+  it('shows on hover only inside (hover: hover)', () => {
+    expect(outsideMediaBlock(stylesheet, '(hover: hover)')).not.toMatch(/:hover/)
+    const hover = mediaBlock(stylesheet, '(hover: hover)')
+    expect(hover).toContain(`.ui-checkbox__input:hover ~ .ui-checkbox__layer {\n    background: ${onSurface8};`)
+    expect(hover).toContain(`.ui-checkbox__input:checked:hover ~ .ui-checkbox__layer {\n    background: ${primary8};`)
+  })
+
+  it('makes the native input a hit area of at least 3rem', () => {
+    expect(declaration(stylesheet, '.ui-checkbox__control', 'width')).toBe('3rem')
+    expect(declaration(stylesheet, '.ui-checkbox__control', 'height')).toBe('3rem')
+    expect(declaration(stylesheet, '.ui-checkbox__input', 'inset')).toBe('0')
+    expect(declaration(stylesheet, '.ui-checkbox__input', 'width')).toBe('100%')
+    expect(declaration(stylesheet, '.ui-checkbox__input', 'height')).toBe('100%')
   })
 })
