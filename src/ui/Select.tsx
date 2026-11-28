@@ -1,7 +1,7 @@
 import type { JSX } from 'preact'
 import { useUniqueId } from './useUniqueId.ts'
-import { FieldError, useFieldError } from './FieldError.tsx'
-import './Field.css'
+import { useFieldError } from './FieldError.tsx'
+import { FieldFrame } from './FieldFrame.tsx'
 
 export interface SelectProps extends Omit<JSX.SelectHTMLAttributes<HTMLSelectElement>, 'class' | 'className'> {
   label: string
@@ -9,24 +9,26 @@ export interface SelectProps extends Omit<JSX.SelectHTMLAttributes<HTMLSelectEle
   error?: string
 }
 
-/** A native `<select>` with a visible `<label>`, styled like a TextField; pass `<option>`s as children. */
+/** A native `<select>` in the same outlined container as a TextField, its label always floated; pass `<option>`s as children. */
 export function Select({ label, error, id, 'aria-describedby': describedBy, ...rest }: SelectProps) {
   const generatedId = useUniqueId()
   const selectId = id ?? generatedId
   const field = useFieldError(selectId, error, describedBy)
   return (
-    <div class="ui-field">
-      <label class="ui-field__label" for={selectId}>
-        {label}
-      </label>
-      <select
-        {...rest}
-        id={selectId}
-        class="ui-field__control"
-        aria-invalid={field.invalid}
-        aria-describedby={field.describedBy}
-      />
-      <FieldError id={field.errorId} error={error} />
-    </div>
+    <FieldFrame
+      controlId={selectId}
+      label={label}
+      errorId={field.errorId}
+      error={error}
+      control={
+        <select
+          {...rest}
+          id={selectId}
+          class="ui-field__control"
+          aria-invalid={field.invalid}
+          aria-describedby={field.describedBy}
+        />
+      }
+    />
   )
 }

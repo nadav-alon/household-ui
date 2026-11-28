@@ -41,12 +41,6 @@ describe('TextField', () => {
   })
 })
 
-describe('Field label type', () => {
-  it('is set in body-small', () => {
-    expect(typeDeclarations('src/ui/Field.css', '.ui-field__label')).toEqual(typeRoleDeclarations('body-small'))
-  })
-})
-
 describe('Field error type', () => {
   it('is set in body-small', () => {
     expect(typeDeclarations('src/ui/Field.css', '.ui-field__error')).toEqual(typeRoleDeclarations('body-small'))
