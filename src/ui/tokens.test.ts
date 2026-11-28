@@ -9,6 +9,28 @@ describe('design tokens', () => {
     }
   })
 
+  it('defines size, line height, weight and tracking for all 15 type-scale styles', () => {
+    for (const role of ['display', 'headline', 'title', 'body', 'label']) {
+      for (const size of ['large', 'medium', 'small']) {
+        for (const part of ['size', 'line-height', 'weight', 'tracking']) {
+          expect(defined, `${role}-${size}-${part}`).toContain(`--md-sys-typescale-${role}-${size}-${part}`)
+        }
+      }
+    }
+  })
+
+  it.each([
+    ['title-large', '1.375rem', '1.75rem', '400', '0'],
+    ['headline-small', '1.5rem', '2rem', '400', '0'],
+    ['label-large', '0.875rem', '1.25rem', '500', '0.1px'],
+    ['body-medium', '0.875rem', '1.25rem', '400', '0.25px'],
+    ['label-medium', '0.75rem', '1rem', '500', '0.5px'],
+  ])('pins %s to the M3 values', (role, size, lineHeight, weight, tracking) => {
+    const tokens = read('src/ui/tokens.css')
+    const value = (part: string) => tokens.match(new RegExp(`--md-sys-typescale-${role}-${part}:\\s*([^;]+);`))?.[1]
+    expect([value('size'), value('line-height'), value('weight'), value('tracking')]).toEqual([size, lineHeight, weight, tracking])
+  })
+
   it('base styles paint the body and the focus ring from defined tokens', () => {
     const base = read('src/ui/base.css')
     expect(base).toMatch(/body\s*{[^}]*background: var\(--md-sys-color-background\)/)
