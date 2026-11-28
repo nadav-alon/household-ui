@@ -68,7 +68,7 @@ export function ListRow({ headline, supporting, trailing, control, muted = false
       {control ? <div class="ui-list-row__trailing">{control}</div> : null}
     </>
   )
-  const classes = ['ui-list-row', muted && 'ui-list-row--muted', (control || href !== undefined) && 'ui-list-row--labelled', stackTrailing && 'ui-list-row--stack-trailing']
+  const classes = ['ui-list-row', muted && 'ui-list-row--muted', (control || href !== undefined) && 'ui-list-row--labelled', stackTrailing && 'ui-list-row--stack-trailing', supporting && 'ui-list-row--two-line']
   return (
     <li class={classes.filter(Boolean).join(' ')}>
       {href !== undefined ? (

@@ -121,6 +121,35 @@ describe('ListRow', () => {
     expect(rule).toMatch(/padding: var\(--md-sys-spacing-2\) 0/)
   })
 
+  describe('height', () => {
+    // The label and the link share one rule, which the link's selector ends.
+    const boxes = ['.ui-list-row', '.ui-list-row__link']
+
+    it('is 3.5rem for one line in every kind of row, with padding inside the box', () => {
+      for (const selector of boxes) {
+        expect(declaration(stylesheet, selector, 'min-height')).toBe('3.5rem')
+        expect(declaration(stylesheet, selector, 'box-sizing')).toBe('border-box')
+      }
+      expect(read(stylesheet)).toMatch(/\.ui-list-row__label,\s*\.ui-list-row__link\s*{[^}]*box-sizing: border-box/)
+      expect(declaration(stylesheet, '.ui-list-row__activate', 'box-sizing')).toBe('border-box')
+    })
+
+    it('is 4.5rem for a row with supporting text', () => {
+      render(
+        <ul>
+          <ListRow headline="Milk" supporting="Grocery" />
+          <ListRow headline="Eggs" />
+        </ul>,
+      )
+      const [milk, eggs] = screen.getAllByRole('listitem')
+      expect(milk).toHaveClass('ui-list-row--two-line')
+      expect(eggs).not.toHaveClass('ui-list-row--two-line')
+      expect(read(stylesheet)).toMatch(
+        /\.ui-list-row\.ui-list-row--two-line,\s*\.ui-list-row--two-line \.ui-list-row__label,\s*\.ui-list-row--two-line \.ui-list-row__link\s*{[^}]*min-height: 4\.5rem/,
+      )
+    })
+  })
+
   it('applies no hover highlight outside the hover-capable media query, nor to a plain row', () => {
     expect(outsideHoverBlock()).not.toMatch(/:hover/)
     const hovered = [...hoverBlock().matchAll(/([^{}]+){/g)].flatMap((m) => m[1].split(',').map((selector) => selector.trim()))
