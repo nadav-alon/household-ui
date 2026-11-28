@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { Button } from './Button.tsx'
-import { declaration, mediaBlock, outsideMediaBlock, tokenUsage } from '../testing/css.ts'
+import { declaration, mediaBlock, outsideMediaBlock, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 const TEXT_DESTRUCTIVE = '.ui-button--text:is(.ui-button--destructive, .ui-dialog-actions__destructive *)'
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -65,5 +65,11 @@ describe('Button', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/Button.css')
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('Button label type', () => {
+  it('is set in label-large', () => {
+    expect(typeDeclarations('src/ui/Button.css', '.ui-button')).toEqual(typeRoleDeclarations('label-large'))
   })
 })
