@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { Checkbox } from './Checkbox.tsx'
-import { declaration, mediaBlock, outsideMediaBlock, read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
+import { declaration, mediaBlock, outsideMediaBlock, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('Checkbox', () => {
   it('is a native checkbox named by its label', () => {
@@ -67,7 +67,7 @@ describe('Checkbox state layer and hit area', () => {
     expect(declaration(stylesheet, layer, 'width')).toBe('2.5rem')
     expect(declaration(stylesheet, layer, 'height')).toBe('2.5rem')
     expect(declaration(stylesheet, layer, 'border-radius')).toBe('var(--md-sys-shape-corner-full)')
-    expect(read(stylesheet)).toMatch(/^\.ui-checkbox__layer {[^}]*background: transparent;/m)
+    expect(declaration(stylesheet, layer, 'background')).toBe('transparent')
   })
 
   it('shows on-surface at 8% on focus-visible, primary when checked', () => {
