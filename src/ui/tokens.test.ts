@@ -1,7 +1,8 @@
-import { execSync } from 'node:child_process'
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { colourRoleProperty } from './colourRoles.ts'
-import { defined, read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
+import { defined, read, repoRoot, tokenUsage, typeDeclarations, typeFamilies, typeProperties, typeRoleDeclarations, typeRoles } from '../testing/css.ts'
 
 describe('design tokens', () => {
   it('define type, spacing, shape and elevation scales', () => {
@@ -11,11 +12,9 @@ describe('design tokens', () => {
   })
 
   it('defines size, line height, weight and tracking for all 15 type-scale styles', () => {
-    for (const role of ['display', 'headline', 'title', 'body', 'label']) {
-      for (const size of ['large', 'medium', 'small']) {
-        for (const part of ['size', 'line-height', 'weight', 'tracking']) {
-          expect(defined, `${role}-${size}-${part}`).toContain(`--md-sys-typescale-${role}-${size}-${part}`)
-        }
+    for (const role of typeRoles) {
+      for (const [, suffix] of typeProperties) {
+        expect(defined, `${role}-${suffix}`).toContain(`--md-sys-typescale-${role}-${suffix}`)
       }
     }
   })
@@ -45,11 +44,13 @@ describe('design tokens', () => {
     expect(typeDeclarations('src/ui/base.css', 'body')).toEqual(typeRoleDeclarations('body-large'))
   })
 
-  it('drops the one-size-per-family tokens and the global line height, and no kit stylesheet reads an undefined token', () => {
-    for (const removed of ['display', 'headline', 'title', 'body', 'label'].map((family) => `--md-sys-typescale-${family}-size`).concat('--md-sys-typescale-line-height')) {
+  it('defines no per-family size token or global line height, and no kit stylesheet reads an undefined token', () => {
+    for (const removed of typeFamilies.map((family) => `--md-sys-typescale-${family}-size`).concat('--md-sys-typescale-line-height')) {
       expect(defined).not.toContain(removed)
     }
-    const stylesheets = execSync('git ls-files "*.css"', { encoding: 'utf8' }).trim().split('\n')
+    const stylesheets = readdirSync(join(repoRoot, 'src'), { recursive: true, encoding: 'utf8' })
+      .filter((path) => path.endsWith('.css'))
+      .map((path) => join('src', path))
     expect(stylesheets.length).toBeGreaterThan(10)
     for (const stylesheet of stylesheets) expect(tokenUsage(stylesheet).undefinedTokens, stylesheet).toEqual([])
   })
