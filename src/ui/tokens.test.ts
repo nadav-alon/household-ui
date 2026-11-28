@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { colourRoleProperty } from './colourRoles.ts'
-import { defined, read } from '../testing/css.ts'
+import { defined, read, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('design tokens', () => {
   it('define type, spacing, shape and elevation scales', () => {
@@ -38,6 +38,10 @@ describe('design tokens', () => {
     for (const [, property] of base.matchAll(/var\((--[\w-]+)\)/g)) {
       expect(defined, property).toContain(property)
     }
+  })
+
+  it('sets the body in body-large', () => {
+    expect(typeDeclarations('src/ui/base.css', 'body')).toEqual(typeRoleDeclarations('body-large'))
   })
 
   it('elevation shadows use a defined colour role', () => {
