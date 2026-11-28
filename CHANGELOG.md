@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.0
+
+- `SegmentedButton` segments stay 2.5rem tall at every width: `ListRow` no longer raises them to 3rem inside a stacked row below 600px. A transparent `::after` extends each segment's hit area to at least 3rem tall without changing its layout height; `.ui-segmented__option` is now `position: relative` and `display: inline-flex`.
+- The selected `SegmentedButton` segment shows a leading 18dp check icon, hidden from assistive tech.
+
 ## 0.8.0
 
 - `FilterChip` is a 2rem container with the small (8dp) corner; a transparent `::after` extends its hit area to at least 3rem tall without changing the layout height. `.ui-filter-chip` is now `position: relative`, `box-sizing: border-box`, and `display: inline-flex` with `align-items: center` (it was the button's default inline-block), which can shift baseline alignment in a row of chips.

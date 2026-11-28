@@ -65,3 +65,25 @@ describe('SegmentedButton size', () => {
     expect(declaration(stylesheet, hitArea, 'transform')).toBe('translateY(-50%)')
   })
 })
+
+describe('SegmentedButton check icon', () => {
+  it('shows a hidden leading check on the selected segment only', () => {
+    render(<SegmentedButton label="State" options={options} value="low" onChange={() => {}} />)
+    const selected = screen.getByRole('button', { name: 'Running low', pressed: true })
+    const icon = selected.querySelector('svg')
+    expect(icon).toHaveAttribute('aria-hidden', 'true')
+    expect(icon).toHaveAttribute('width', '1.125rem')
+    expect(icon).toHaveAttribute('height', '1.125rem')
+    expect(selected.firstElementChild).toBe(icon)
+    expect(screen.getByRole('button', { name: 'Enough' }).querySelector('svg')).toBeNull()
+    expect(screen.getByRole('button', { name: 'Out' }).querySelector('svg')).toBeNull()
+  })
+
+  it('centres the icon beside the label with a 8dp gap', () => {
+    const option = '.ui-segmented__option'
+    expect(declaration('src/ui/SegmentedButton.css', option, 'display')).toBe('inline-flex')
+    expect(declaration('src/ui/SegmentedButton.css', option, 'align-items')).toBe('center')
+    expect(declaration('src/ui/SegmentedButton.css', option, 'justify-content')).toBe('center')
+    expect(declaration('src/ui/SegmentedButton.css', option, 'gap')).toBe('var(--md-sys-spacing-2)')
+  })
+})

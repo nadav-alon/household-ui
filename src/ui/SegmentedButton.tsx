@@ -1,3 +1,5 @@
+import CheckIcon from '~icons/material-symbols/check'
+import { Icon } from './Icon.tsx'
 import './SegmentedButton.css'
 
 export interface SegmentedOption<Value extends string> {
@@ -13,7 +15,7 @@ export interface SegmentedButtonProps<Value extends string> {
   onChange: (value: Value) => void
 }
 
-/** A group of native toggle buttons, one per option; the selected one has `aria-pressed="true"`. */
+/** A group of native toggle buttons, one per option; the selected one has `aria-pressed="true"` and a leading check. */
 export function SegmentedButton<Value extends string>({ label, options, value, onChange }: SegmentedButtonProps<Value>) {
   return (
     <div role="group" aria-label={label} class="ui-segmented">
@@ -25,6 +27,7 @@ export function SegmentedButton<Value extends string>({ label, options, value, o
           aria-pressed={option.value === value}
           onClick={() => onChange(option.value)}
         >
+          {option.value === value && <Icon symbol={CheckIcon} size="1.125rem" />}
           {option.label}
         </button>
       ))}
