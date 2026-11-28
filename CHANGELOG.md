@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.0
+
+- `TextField`, `TextArea` and `Select` are outlined fields: the control is at least 3.5rem tall with a transparent background and 4dp corners, so it no longer reads as a hole in a dialog. The label sits inside in body-large and floats into a notch in the top outline, in body-small, when the control is focused or holds a value (a `Select` is always floated). The outline is outline-coloured at rest, primary when focused and error when invalid.
+- Markup: each field is now `.ui-field__container` holding the control, its `<label>`, a decorative `.ui-field__outline` and the error beneath; the control's own border is transparent and the outline draws it. `TextField` and `TextArea` default `placeholder` to a space, which the floating label relies on.
+- The error message under a field is inset 16dp from each side, in line with M3's supporting text.
+- `Select` hides the native arrow and shows a trailing 24dp arrow-drop-down icon in on-surface-variant that ignores pointer events.
+
 ## 0.10.0
 
 - New `Checkbox` (`ui/Checkbox.tsx`, `ui/Checkbox.css`): a native `<input type="checkbox">` with an 18dp box (on-surface-variant outline; primary fill with an on-primary check when selected), a 40dp state layer on hover (inside `(hover: hover)`) and focus-visible, and a 48dp hit area. `checked`, `onChange` and the other input props pass through. An optional `label` renders a tappable label beside the box in a row at least 48dp tall; without one, give it an `aria-label`.

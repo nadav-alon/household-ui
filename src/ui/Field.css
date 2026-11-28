@@ -4,30 +4,114 @@
   gap: var(--md-sys-spacing-1);
 }
 
+.ui-field__container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.ui-field__control {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0 var(--md-sys-spacing-4);
+  border: 1px solid transparent;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  font: inherit;
+}
+
+/* The label rests inside the container; a placeholder stays hidden until the label has floated clear of it. */
+.ui-field__control:not(:focus)::placeholder {
+  color: transparent;
+}
+
 .ui-field__label {
+  position: absolute;
+  top: 1.75rem;
+  left: var(--md-sys-spacing-4);
+  max-width: calc(100% - 2 * var(--md-sys-spacing-4));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  transform-origin: left center;
+  pointer-events: none;
   color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+}
+
+.ui-field__control:focus ~ .ui-field__label {
+  color: var(--md-sys-color-primary);
+}
+
+.ui-field__control[aria-invalid='true'] ~ .ui-field__label {
+  color: var(--md-sys-color-error);
+}
+
+.ui-field__control:is(:focus, :not(:placeholder-shown)) ~ .ui-field__label {
+  top: 0;
   font-size: var(--md-sys-typescale-body-small-size);
   line-height: var(--md-sys-typescale-body-small-line-height);
   font-weight: var(--md-sys-typescale-body-small-weight);
   letter-spacing: var(--md-sys-typescale-body-small-tracking);
 }
 
-.ui-field__control {
-  min-height: 3rem;
-  padding: 0 var(--md-sys-spacing-4);
+/* Draws the border, with a gap in the top edge where the floated label sits. */
+.ui-field__outline {
+  position: absolute;
+  inset: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0 var(--md-sys-spacing-3);
   border: 1px solid var(--md-sys-color-outline);
   border-radius: var(--md-sys-shape-corner-extra-small);
-  background: var(--md-sys-color-surface);
-  color: var(--md-sys-color-on-surface);
-  font: inherit;
+  pointer-events: none;
 }
 
-.ui-field__control[aria-invalid='true'] {
+.ui-field__notch {
+  float: unset;
+  width: auto;
+  max-width: 0.01px;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+  visibility: hidden;
+  white-space: nowrap;
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  font-weight: var(--md-sys-typescale-body-small-weight);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+}
+
+.ui-field__notch > span {
+  display: inline-block;
+  padding: 0 var(--md-sys-spacing-1);
+}
+
+.ui-field__notch > span::before {
+  content: attr(data-label);
+}
+
+.ui-field__control:is(:focus, :not(:placeholder-shown)) ~ .ui-field__outline > .ui-field__notch {
+  max-width: 100%;
+}
+
+.ui-field__control:focus ~ .ui-field__outline {
+  border-color: var(--md-sys-color-primary);
+  border-width: 2px;
+}
+
+.ui-field__control[aria-invalid='true'] ~ .ui-field__outline {
   border-color: var(--md-sys-color-error);
 }
 
 .ui-field__error {
-  margin: 0;
+  margin: 0 var(--md-sys-spacing-4);
   color: var(--md-sys-color-error);
   font-size: var(--md-sys-typescale-body-small-size);
   line-height: var(--md-sys-typescale-body-small-line-height);
@@ -37,6 +121,23 @@
 
 .ui-field__control--multiline {
   min-height: 8rem;
-  padding: var(--md-sys-spacing-3) var(--md-sys-spacing-4);
+  padding: var(--md-sys-spacing-4);
   resize: vertical;
+}
+
+select.ui-field__control {
+  appearance: none;
+  padding-right: calc(var(--md-sys-spacing-4) + 1.5rem + var(--md-sys-spacing-2));
+}
+
+.ui-field__trailing-icon {
+  position: absolute;
+  top: 50%;
+  right: var(--md-sys-spacing-3);
+  display: flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--md-sys-color-on-surface-variant);
 }
