@@ -154,6 +154,13 @@ describe('ListRow', () => {
     expect(declaration(stylesheet, '.ui-list-row', 'background')).toBe('transparent')
   })
 
+  it('sets a muted headline in on-surface-variant, never italic', () => {
+    const selector = '.ui-list-row--muted .ui-list-row__headline'
+    expect(declaration(stylesheet, selector, 'color')).toBe('var(--md-sys-color-on-surface-variant)')
+    expect(declaration(stylesheet, selector, 'font-style')).toBeUndefined()
+    expect(read(stylesheet)).not.toMatch(/italic/)
+  })
+
   it('applies no hover highlight outside the hover-capable media query, nor to a plain row', () => {
     expect(outsideHoverBlock()).not.toMatch(/:hover/)
     const hovered = [...hoverBlock().matchAll(/([^{}]+){/g)].flatMap((m) => m[1].split(',').map((selector) => selector.trim()))

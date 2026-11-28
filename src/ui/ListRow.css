@@ -45,7 +45,6 @@
 
 .ui-list-row--muted .ui-list-row__headline {
   color: var(--md-sys-color-on-surface-variant);
-  font-style: italic;
 }
 
 .ui-list-row--labelled {
