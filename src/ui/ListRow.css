@@ -15,7 +15,8 @@
   min-width: 0;
 }
 
-.ui-list-row__headline {  font-size: var(--md-sys-typescale-body-large-size);
+.ui-list-row__headline {
+  font-size: var(--md-sys-typescale-body-large-size);
   line-height: var(--md-sys-typescale-body-large-line-height);
   font-weight: var(--md-sys-typescale-body-large-weight);
   letter-spacing: var(--md-sys-typescale-body-large-tracking);
