@@ -150,6 +150,10 @@ describe('ListRow', () => {
     })
   })
 
+  it('paints nothing of its own, so it takes its container\'s colour', () => {
+    expect(declaration(stylesheet, '.ui-list-row', 'background')).toBe('transparent')
+  })
+
   it('applies no hover highlight outside the hover-capable media query, nor to a plain row', () => {
     expect(outsideHoverBlock()).not.toMatch(/:hover/)
     const hovered = [...hoverBlock().matchAll(/([^{}]+){/g)].flatMap((m) => m[1].split(',').map((selector) => selector.trim()))
