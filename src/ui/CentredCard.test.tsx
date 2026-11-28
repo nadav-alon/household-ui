@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/preact'
 import { CentredCard } from './CentredCard.tsx'
-import { read, tokenUsage } from '../testing/css.ts'
+import { declaration, read, tokenUsage } from '../testing/css.ts'
 
 describe('CentredCard', () => {
   it('shows the app name, the screen heading and its content, with no navigation', () => {
@@ -23,6 +23,13 @@ describe('CentredCard', () => {
     expect(css).toMatch(/align-items:\s*center/)
     expect(css).toMatch(/max-width:/)
     expect(css).not.toMatch(/@media/)
+  })
+
+  it('is a filled card: surface-container-highest at level 0 with on-surface text', () => {
+    const surface = (property: string) => declaration('src/ui/CentredCard.css', '.ui-centred-card__surface', property)
+    expect(surface('background')).toBe('var(--md-sys-color-surface-container-highest)')
+    expect(surface('box-shadow')).toBe('var(--md-sys-elevation-level0)')
+    expect(surface('color')).toBe('var(--md-sys-color-on-surface)')
   })
 
   it('is styled only from defined tokens, which cover light and dark', () => {

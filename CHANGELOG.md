@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2
+
+- `CentredCard`: the card surface is a filled card, `surface-container-highest` with the level-0 elevation
+  (no shadow), instead of `surface-container` with a level-1 shadow.
+
 ## 0.5.1
 
 - `IconButton`: `title` defaults to `label`, so every icon-only button gets a hover tooltip; a caller's own
