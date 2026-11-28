@@ -68,6 +68,31 @@ describe('Button', () => {
   })
 })
 
+describe('Button touch target', () => {
+  const HIT_AREA = '.ui-button::after'
+
+  it('keeps the container at 2.5rem tall', () => {
+    expect(declaration('src/ui/Button.css', '.ui-button', 'min-height')).toBe('2.5rem')
+  })
+
+  it('extends the hit area to at least 3rem each way, centred on the container', () => {
+    expect(declaration('src/ui/Button.css', '.ui-button', 'position')).toBe('relative')
+    expect(declaration('src/ui/Button.css', HIT_AREA, 'position')).toBe('absolute')
+    expect(declaration('src/ui/Button.css', HIT_AREA, 'width')).toBe('max(100%, 3rem)')
+    expect(declaration('src/ui/Button.css', HIT_AREA, 'height')).toBe('max(100%, 3rem)')
+    expect(declaration('src/ui/Button.css', HIT_AREA, 'top')).toBe('50%')
+    expect(declaration('src/ui/Button.css', HIT_AREA, 'left')).toBe('50%')
+    expect(declaration('src/ui/Button.css', HIT_AREA, 'transform')).toBe('translate(-50%, -50%)')
+  })
+
+  it('paints nothing and takes no space in the layout', () => {
+    expect(declaration('src/ui/Button.css', HIT_AREA, 'content')).toBe("''")
+    for (const property of ['background', 'border', 'box-shadow', 'outline']) {
+      expect(declaration('src/ui/Button.css', HIT_AREA, property)).toBeUndefined()
+    }
+  })
+})
+
 describe('Button label type', () => {
   it('is set in label-large', () => {
     expect(typeDeclarations('src/ui/Button.css', '.ui-button')).toEqual(typeRoleDeclarations('label-large'))

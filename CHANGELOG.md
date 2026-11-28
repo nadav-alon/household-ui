@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+- `Button`: every `.ui-button`, in each variant and in its anchor form, has a touch target of at least 48dp
+  tall, and 48dp wide when narrower, centred on the 40dp container. A transparent `::after` supplies it,
+  so the container's size and the layout are unchanged. `.ui-button` is now `position: relative`.
+
 ## 0.6.0
 
 - **Breaking:** the type scale is the M3 scale's 15 styles. `tokens.css` defines
