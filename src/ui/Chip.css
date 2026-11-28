@@ -9,6 +9,8 @@
   color: var(--md-sys-color-on-surface-variant);
 }
 
-.ui-chip__label {
-  font-size: var(--md-sys-typescale-label-size);
+.ui-chip__label {  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
 }
