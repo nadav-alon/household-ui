@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.0
+
+- **Breaking:** `Dialog`'s `closable` prop is gone. A dialog is a basic dialog at every width: 280–560dp wide, 28dp corners,
+  centred, as tall as its content, with a headline-small title and no Close icon; its actions, Escape, a backdrop tap and
+  browser back dismiss it. Long forms should opt into `variant="full-screen"`.
+- `Dialog` takes `variant: 'basic' | 'full-screen'` (default `'basic'`). Below 600px a full-screen dialog fills the viewport
+  with no corners; its header is a Close icon button (it closes like Escape, honouring `hasUnsavedEdits`), a title-large
+  title and the new `confirm` slot for the confirming text button. Inside it the main part of a `DialogActions` row is hidden
+  and its `destructive` action stays. From 600px up it renders as a basic dialog and `confirm` is not shown.
+
 ## 0.10.0
 
 - New `Checkbox` (`ui/Checkbox.tsx`, `ui/Checkbox.css`): a native `<input type="checkbox">` with an 18dp box (on-surface-variant outline; primary fill with an on-primary check when selected), a 40dp state layer on hover (inside `(hover: hover)`) and focus-visible, and a 48dp hit area. `checked`, `onChange` and the other input props pass through. An optional `label` renders a tappable label beside the box in a row at least 48dp tall; without one, give it an `aria-label`.
