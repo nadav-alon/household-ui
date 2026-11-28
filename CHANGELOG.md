@@ -5,6 +5,8 @@
 - `Button`: every `.ui-button`, in each variant and in its anchor form, has a touch target of at least 48dp
   tall, and 48dp wide when narrower, centred on the 40dp container. A transparent `::after` supplies it,
   so the container's size and the layout are unchanged. `.ui-button` is now `position: relative`.
+  The `::after` extends 4px past a button's top and bottom, and sideways on buttons narrower than 48px, which counts
+  as scrollable overflow: check that no `overflow: auto` or `scroll` ancestor has an edge flush with a button.
 
 ## 0.6.0
 

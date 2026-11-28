@@ -1,10 +1,21 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { Button } from './Button.tsx'
-import { declaration, mediaBlock, outsideMediaBlock, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
+import { declaration, mediaBlock, outsideMediaBlock, read, repoRoot, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 const TEXT_DESTRUCTIVE = '.ui-button--text:is(.ui-button--destructive, .ui-dialog-actions__destructive *)'
+const HIT_AREA = '.ui-button::after'
+const HIT_AREA_DECLARATIONS = {
+  content: "''",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  width: 'max(100%, 3rem)',
+  height: 'max(100%, 3rem)',
+  transform: 'translate(-50%, -50%)',
+}
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 describe('Button', () => {
@@ -69,26 +80,29 @@ describe('Button', () => {
 })
 
 describe('Button touch target', () => {
-  const HIT_AREA = '.ui-button::after'
-
   it('keeps the container at 2.5rem tall', () => {
     expect(declaration('src/ui/Button.css', '.ui-button', 'min-height')).toBe('2.5rem')
   })
 
   it('extends the hit area to at least 3rem each way, centred on the container', () => {
     expect(declaration('src/ui/Button.css', '.ui-button', 'position')).toBe('relative')
-    expect(declaration('src/ui/Button.css', HIT_AREA, 'position')).toBe('absolute')
-    expect(declaration('src/ui/Button.css', HIT_AREA, 'width')).toBe('max(100%, 3rem)')
-    expect(declaration('src/ui/Button.css', HIT_AREA, 'height')).toBe('max(100%, 3rem)')
-    expect(declaration('src/ui/Button.css', HIT_AREA, 'top')).toBe('50%')
-    expect(declaration('src/ui/Button.css', HIT_AREA, 'left')).toBe('50%')
-    expect(declaration('src/ui/Button.css', HIT_AREA, 'transform')).toBe('translate(-50%, -50%)')
+    for (const [property, value] of Object.entries(HIT_AREA_DECLARATIONS)) {
+      expect(declaration('src/ui/Button.css', HIT_AREA, property), property).toBe(value)
+    }
   })
 
-  it('paints nothing and takes no space in the layout', () => {
-    expect(declaration('src/ui/Button.css', HIT_AREA, 'content')).toBe("''")
-    for (const property of ['background', 'border', 'box-shadow', 'outline']) {
-      expect(declaration('src/ui/Button.css', HIT_AREA, property)).toBeUndefined()
+  it('paints nothing and takes no space: the hit area holds exactly its declarations', () => {
+    const body = read('src/ui/Button.css').match(new RegExp(`${escapeRegExp(HIT_AREA)}\\s*{([^}]*)}`))?.[1] ?? ''
+    const properties = [...body.matchAll(/(?:^|[;\s])([a-z-]+)\s*:/g)].map((m) => m[1])
+    expect(properties.sort()).toEqual(Object.keys(HIT_AREA_DECLARATIONS).sort())
+  })
+
+  it('has no rule in any stylesheet under src reaching another ::after on a button', () => {
+    const stylesheets = readdirSync(join(repoRoot, 'src'), { recursive: true, encoding: 'utf8' }).filter((path) => path.endsWith('.css'))
+    for (const stylesheet of stylesheets) {
+      const selectors = [...read(`src/${stylesheet}`).matchAll(/([^{}]*)\{/g)].map((m) => m[1]!.trim())
+      const reaching = selectors.filter((selector) => /\.ui-button\b[^,]*::?after/.test(selector))
+      expect(reaching, stylesheet).toEqual(stylesheet === 'ui/Button.css' ? [HIT_AREA] : [])
     }
   })
 })
