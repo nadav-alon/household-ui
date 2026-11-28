@@ -1,8 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact'
 import { Dialog } from './Dialog.tsx'
-import { readFileSync } from 'node:fs'
-import { mediaBlock, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
+import { declaration, mediaBlock, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 import { stubModalDialog } from '../testing/dialog.ts'
 
 beforeEach(stubModalDialog)
@@ -143,26 +142,13 @@ describe('Dialog', () => {
     expect(onClose).not.toHaveBeenCalled()
   })
 
-  it('has no Close button unless closable', () => {
+  it('has no Close button', () => {
     render(
       <Dialog open title="New item" onClose={() => {}}>
         x
       </Dialog>,
     )
     expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
-  })
-
-  it('asks once to close from the Close button when closable', () => {
-    const onClose = vi.fn()
-    render(
-      <Dialog open closable title="New item" onClose={onClose}>
-        x
-      </Dialog>,
-    )
-    const close = screen.getByRole('button', { name: 'Close' })
-    expect(close.parentElement).toBe(screen.getByRole('heading', { name: 'New item' }).parentElement)
-    fireEvent.click(close)
-    expect(onClose).toHaveBeenCalledOnce()
   })
 
   it('closes the native dialog when the caller closes it', () => {
@@ -271,19 +257,15 @@ describe('Dialog', () => {
     expect(history.state).toMatchObject({ 'ui-dialog': expect.any(String) })
   })
 
-  it('is full-screen below 600px and centred from 600px up', () => {
-    const css = readFileSync('src/ui/Dialog.css', 'utf8')
-    expect(css).toMatch(/@media \(min-width: 600px\)/)
-    expect(css).toMatch(/\.ui-dialog\s*{[^}]*width: 100%[^}]*height: 100%/)
-    expect(css).toMatch(/@media \(min-width: 600px\)\s*{[\s\S]*margin: auto/)
-  })
-
-  it('is as tall as its content from 600px up, capped at the viewport', () => {
-    const wideBlock = mediaBlock('src/ui/Dialog.css', '(min-width: 600px)')
-    expect(wideBlock).not.toBe('')
-    expect(wideBlock).toMatch(/(^|[\s;{])height: fit-content/)
-    expect(wideBlock).not.toMatch(/(^|[\s;{])height: auto/)
-    expect(wideBlock).toMatch(/max-height: calc\(100% - var\(--md-sys-spacing-8\)\)/)
+  it('is a centred 280–560dp box with 28dp corners at every width, as tall as its content', () => {
+    const rule = (property: string) => declaration('src/ui/Dialog.css', '.ui-dialog', property)
+    expect(mediaBlock('src/ui/Dialog.css', '(min-width: 600px)')).toBe('')
+    expect(rule('width')).toBe('min(35rem, calc(100% - var(--md-sys-spacing-8)))')
+    expect(rule('min-width')).toBe('min(17.5rem, calc(100% - var(--md-sys-spacing-8)))')
+    expect(rule('height')).toBe('fit-content')
+    expect(rule('max-height')).toBe('calc(100% - var(--md-sys-spacing-8))')
+    expect(rule('margin')).toBe('auto')
+    expect(rule('border-radius')).toBe('var(--md-sys-shape-corner-extra-large)')
   })
 
   it('is styled only from defined tokens', () => {
@@ -298,7 +280,7 @@ describe('Dialog', () => {
     })
     const renderDirty = (onClose: () => void) =>
       render(
-        <Dialog open closable hasUnsavedEdits title="New item" onClose={onClose}>
+        <Dialog open hasUnsavedEdits title="New item" onClose={onClose}>
           <input defaultValue="typed" aria-label="Name" />
         </Dialog>,
       )
@@ -310,7 +292,6 @@ describe('Dialog', () => {
         fireEvent.mouseDown(dialog, { clientX: 50, clientY: 200 })
         fireEvent.click(dialog, { clientX: 50, clientY: 200 })
       },
-      'the Close button': () => fireEvent.click(screen.getByRole('button', { name: 'Close' })),
     }
 
     for (const [name, close] of Object.entries(closers)) {
@@ -336,7 +317,7 @@ describe('Dialog', () => {
         const confirmSpy = vi.spyOn(window, 'confirm')
         const onClose = vi.fn()
         render(
-          <Dialog open closable title="New item" onClose={onClose}>
+          <Dialog open title="New item" onClose={onClose}>
             x
           </Dialog>,
         )

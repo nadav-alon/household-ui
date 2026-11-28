@@ -2,22 +2,20 @@ import type { ComponentChildren } from 'preact'
 import { useLayoutEffect, useRef } from 'preact/hooks'
 import { useUniqueId } from './useUniqueId.ts'
 import { afterPendingPop, popEntry } from './pendingPop.ts'
-import { IconButton } from './IconButton.tsx'
-import CloseIcon from '~icons/material-symbols/close'
 import './Dialog.css'
 
 export interface DialogProps {
   open: boolean
   /** Accessible name and visible heading. */
   title: string
-  /** Called on Escape, on a tap of the backdrop, on the Close button, on browser back, and if the browser closes the dialog itself; the caller decides by setting `open`. With `hasUnsavedEdits` set, it is only called once the user confirms discarding them. */
+  /** Called on Escape, on a tap of the backdrop, on browser back, and if the browser closes the dialog itself; the caller decides by setting `open`. With `hasUnsavedEdits` set, it is only called once the user confirms discarding them. */
   onClose: () => void
   /** Extra class for the `<dialog>`, for a dialog that departs from the shared layout. */
   class?: string
   /** Content holds edits that closing would lose: every way of closing first asks to confirm discarding them, and only calls `onClose` when confirmed. */
   hasUnsavedEdits?: boolean
-  /** Puts a Close icon button in the title row that asks to close like Escape does. */
-  closable?: boolean
+  /** `basic` (the default) is a centred 280–560dp dialog at every width; the caller's actions dismiss it, so it has no Close icon. */
+  variant?: 'basic' | 'full-screen'
   children: ComponentChildren
 }
 
@@ -37,7 +35,7 @@ function isBackdropPoint(event: MouseEvent & { currentTarget: HTMLDialogElement 
  * Each dialog tags its entry with its own id and only pops an entry it still owns, and a dialog
  * opening while another's pop is in flight waits for that pop to land before pushing its own entry.
  */
-export function Dialog({ open, title, onClose, class: className, closable, hasUnsavedEdits, children }: DialogProps) {
+export function Dialog({ open, title, onClose, class: className, hasUnsavedEdits, children }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null)
   const titleId = useUniqueId()
   const entryId = useUniqueId()
@@ -129,7 +127,6 @@ export function Dialog({ open, title, onClose, class: className, closable, hasUn
         <h2 class="ui-dialog__title" id={titleId}>
           {title}
         </h2>
-        {closable && <IconButton symbol={CloseIcon} label="Close" onClick={requestClose} />}
       </div>
       {children}
     </dialog>

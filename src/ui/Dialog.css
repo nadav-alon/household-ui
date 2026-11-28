@@ -1,10 +1,12 @@
 .ui-dialog {
   box-sizing: border-box;
-  width: 100%;
+  width: min(35rem, calc(100% - var(--md-sys-spacing-8)));
+  min-width: min(17.5rem, calc(100% - var(--md-sys-spacing-8)));
   max-width: none;
-  height: 100%;
-  max-height: none;
-  margin: 0;
+  height: fit-content;
+  max-height: calc(100% - var(--md-sys-spacing-8));
+  margin: auto;
+  border-radius: var(--md-sys-shape-corner-extra-large);
   padding: var(--md-sys-spacing-6);
   border: 0;
   background: var(--md-sys-color-surface-container-high);
@@ -29,14 +31,4 @@
   line-height: var(--md-sys-typescale-headline-small-line-height);
   font-weight: var(--md-sys-typescale-headline-small-weight);
   letter-spacing: var(--md-sys-typescale-headline-small-tracking);
-}
-
-@media (min-width: 600px) {
-  .ui-dialog {
-    width: min(35rem, calc(100% - var(--md-sys-spacing-8)));
-    height: fit-content;
-    max-height: calc(100% - var(--md-sys-spacing-8));
-    margin: auto;
-    border-radius: var(--md-sys-shape-corner-extra-large);
-  }
 }
