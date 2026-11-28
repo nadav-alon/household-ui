@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen, within } from '@testing-library/preact'
 import { TopAppBar, TopAppBarActions, TopAppBarNavigation } from './TopAppBar.tsx'
-import { read, tokenUsage } from '../testing/css.ts'
+import { read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('TopAppBar', () => {
   it('shows the title as the page heading inside a banner', () => {
@@ -61,5 +61,11 @@ describe('TopAppBar', () => {
     const { used, undefinedTokens } = tokenUsage('src/shell/TopAppBar.css')
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('TopAppBar title type', () => {
+  it('is set in title-large', () => {
+    expect(typeDeclarations('src/shell/TopAppBar.css', '.shell-top-bar__title')).toEqual(typeRoleDeclarations('title-large'))
   })
 })
