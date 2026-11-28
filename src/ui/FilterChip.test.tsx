@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { FilterChip } from './FilterChip.tsx'
-import { tokenUsage } from '../testing/css.ts'
+import { tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('FilterChip', () => {
   it('is a button pressed only while selected', () => {
@@ -25,5 +25,11 @@ describe('FilterChip', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/FilterChip.css')
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('FilterChip label type', () => {
+  it('is set in label-large', () => {
+    expect(typeDeclarations('src/ui/FilterChip.css', '.ui-filter-chip')).toEqual(typeRoleDeclarations('label-large'))
   })
 })

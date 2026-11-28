@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { colourRoleNames, colourRoleProperty } from '../ui/colourRoles.ts'
 
-const repoRoot = join(import.meta.dirname, '../..')
+export const repoRoot = join(import.meta.dirname, '../..')
 
 /** Test-only: reads a file by its repo-relative path. Nothing in the app may import this module. */
 export const read = (path: string) => readFileSync(join(repoRoot, path), 'utf8')
@@ -38,3 +38,25 @@ export function declaration(stylesheet: string, selector: string, property: stri
   )
   return values.at(-1)
 }
+
+export const typeFamilies = ['display', 'headline', 'title', 'body', 'label'] as const
+export const typeSizes = ['large', 'medium', 'small'] as const
+/** The 15 M3 type-scale styles, e.g. `label-large`. */
+export type TypeRole = `${(typeof typeFamilies)[number]}-${(typeof typeSizes)[number]}`
+export const typeRoles = typeFamilies.flatMap((family) => typeSizes.map((size): TypeRole => `${family}-${size}`))
+
+/** The four longhands a type role sets, each with the suffix of the token that carries it. */
+export const typeProperties = [
+  ['font-size', 'size'],
+  ['line-height', 'line-height'],
+  ['font-weight', 'weight'],
+  ['letter-spacing', 'tracking'],
+] as const
+
+/** What a rule must declare to set its text in an M3 type-scale role. */
+export const typeRoleDeclarations = (role: TypeRole) =>
+  Object.fromEntries(typeProperties.map(([property, suffix]) => [property, `var(--md-sys-typescale-${role}-${suffix})`]))
+
+/** The type-role longhands a stylesheet's `selector { … }` rule declares; compare with `typeRoleDeclarations`. */
+export const typeDeclarations = (stylesheet: string, selector: string) =>
+  Object.fromEntries(typeProperties.map(([property]) => [property, declaration(stylesheet, selector, property)]))

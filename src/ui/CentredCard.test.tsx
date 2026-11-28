@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/preact'
 import { CentredCard } from './CentredCard.tsx'
-import { declaration, read, tokenUsage } from '../testing/css.ts'
+import { declaration, read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('CentredCard', () => {
   it('shows the app name, the screen heading and its content, with no navigation', () => {
@@ -36,5 +36,17 @@ describe('CentredCard', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/CentredCard.css')
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('CentredCard name type', () => {
+  it('is set in title-large', () => {
+    expect(typeDeclarations('src/ui/CentredCard.css', '.ui-centred-card__name')).toEqual(typeRoleDeclarations('title-large'))
+  })
+})
+
+describe('CentredCard h1 type', () => {
+  it('is set in headline-medium', () => {
+    expect(typeDeclarations('src/ui/CentredCard.css', '.ui-centred-card__surface h1')).toEqual(typeRoleDeclarations('headline-medium'))
   })
 })

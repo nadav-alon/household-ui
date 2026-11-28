@@ -8,10 +8,12 @@
   border: 0;
   border-radius: var(--md-sys-shape-corner-full);
   font: inherit;
-  font-size: var(--md-sys-typescale-label-size);
-  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
 }
 
 .ui-button--filled {

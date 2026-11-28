@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/preact'
-import { tokenUsage } from '../testing/css.ts'
+import { tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 import { SnackbarHost, resetSnackbar, showSnackbar } from './Snackbar.tsx'
 
 afterEach(() => {
@@ -308,5 +308,11 @@ describe('Snackbar', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/Snackbar.css')
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('Snackbar text type', () => {
+  it('is set in body-medium', () => {
+    expect(typeDeclarations('src/ui/Snackbar.css', '.ui-snackbar__text')).toEqual(typeRoleDeclarations('body-medium'))
   })
 })

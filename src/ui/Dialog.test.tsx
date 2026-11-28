@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact'
 import { Dialog } from './Dialog.tsx'
 import { readFileSync } from 'node:fs'
-import { mediaBlock, tokenUsage } from '../testing/css.ts'
+import { mediaBlock, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 import { stubModalDialog } from '../testing/dialog.ts'
 
 beforeEach(stubModalDialog)
@@ -396,5 +396,11 @@ describe('Dialog', () => {
       expect(confirmSpy).toHaveBeenCalledTimes(2)
       expect(onClose).toHaveBeenCalledOnce()
     })
+  })
+})
+
+describe('Dialog title type', () => {
+  it('is set in headline-small', () => {
+    expect(typeDeclarations('src/ui/Dialog.css', '.ui-dialog__title')).toEqual(typeRoleDeclarations('headline-small'))
   })
 })

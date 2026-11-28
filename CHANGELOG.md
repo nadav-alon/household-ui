@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.6.0
+
+- **Breaking:** the type scale is the M3 scale's 15 styles. `tokens.css` defines
+  `--md-sys-typescale-<role>-<size>-size`, `-line-height`, `-weight` and `-tracking` for each of
+  display, headline, title, body and label in large, medium and small, at M3's baseline values. These tokens
+  are removed; read the role that fits the text instead:
+  - `--md-sys-typescale-display-size` → `--md-sys-typescale-display-medium-size` (and its line height, weight, tracking)
+  - `--md-sys-typescale-headline-size` → `--md-sys-typescale-headline-small-size` (a dialog title) or `-headline-medium-size` (a page heading)
+  - `--md-sys-typescale-title-size` → `--md-sys-typescale-title-large-size`
+  - `--md-sys-typescale-body-size` → `--md-sys-typescale-body-large-size`
+  - `--md-sys-typescale-label-size` → `--md-sys-typescale-label-large-size` (buttons, chips), or `-label-medium-size` for smaller labels
+  - `--md-sys-typescale-line-height` → the `-line-height` token of the same role, e.g. `--md-sys-typescale-body-large-line-height`
+- The kit sets its text in roles: `TopAppBar` title in title-large; `Dialog` title in headline-small;
+  `Button`, `Chip`, `FilterChip` and `SegmentedButton` labels in label-large; `ListRow` headline in
+  body-large and supporting text in body-medium; field labels and errors in body-small; `AlertBanner` and
+  `Snackbar` text in body-medium; `CentredCard` name in title-large and its `h1` in headline-medium. The body
+  is set in body-large. Line heights now sit on the 4dp grid and weights and letter spacing follow M3.
+
 ## 0.5.2
 
 - `CentredCard`: the card surface is a filled card, `surface-container-highest` with the level-0 elevation

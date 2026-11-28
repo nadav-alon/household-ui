@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { SegmentedButton } from './SegmentedButton.tsx'
-import { tokenUsage } from '../testing/css.ts'
+import { tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 const options = [
   { value: 'enough', label: 'Enough' },
@@ -36,5 +36,11 @@ describe('SegmentedButton', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/SegmentedButton.css')
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('SegmentedButton label type', () => {
+  it('is set in label-large', () => {
+    expect(typeDeclarations('src/ui/SegmentedButton.css', '.ui-segmented__option')).toEqual(typeRoleDeclarations('label-large'))
   })
 })

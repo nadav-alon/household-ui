@@ -11,8 +11,11 @@
 
 .ui-centred-card__name {
   margin: 0;
-  font-size: var(--md-sys-typescale-title-size);
   color: var(--md-sys-color-primary);
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  letter-spacing: var(--md-sys-typescale-title-large-tracking);
 }
 
 .ui-centred-card__surface {
@@ -34,8 +37,10 @@
 }
 
 .ui-centred-card__surface h1 {
-  font-size: var(--md-sys-typescale-headline-size);
-  font-weight: 400;
+  font-size: var(--md-sys-typescale-headline-medium-size);
+  line-height: var(--md-sys-typescale-headline-medium-line-height);
+  font-weight: var(--md-sys-typescale-headline-medium-weight);
+  letter-spacing: var(--md-sys-typescale-headline-medium-tracking);
 }
 
 .ui-centred-card__surface a {

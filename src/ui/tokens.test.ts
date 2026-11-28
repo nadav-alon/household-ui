@@ -1,12 +1,34 @@
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { colourRoleProperty } from './colourRoles.ts'
-import { defined, read } from '../testing/css.ts'
+import { defined, read, repoRoot, tokenUsage, typeDeclarations, typeFamilies, typeProperties, typeRoleDeclarations, typeRoles } from '../testing/css.ts'
 
 describe('design tokens', () => {
   it('define type, spacing, shape and elevation scales', () => {
     for (const prefix of ['typescale', 'spacing', 'shape', 'elevation']) {
       expect([...defined].some((p) => p.startsWith(`--md-sys-${prefix}`))).toBe(true)
     }
+  })
+
+  it('defines size, line height, weight and tracking for all 15 type-scale styles', () => {
+    for (const role of typeRoles) {
+      for (const [, suffix] of typeProperties) {
+        expect(defined, `${role}-${suffix}`).toContain(`--md-sys-typescale-${role}-${suffix}`)
+      }
+    }
+  })
+
+  it.each([
+    ['title-large', '1.375rem', '1.75rem', '400', '0'],
+    ['headline-small', '1.5rem', '2rem', '400', '0'],
+    ['label-large', '0.875rem', '1.25rem', '500', '0.1px'],
+    ['body-medium', '0.875rem', '1.25rem', '400', '0.25px'],
+    ['label-medium', '0.75rem', '1rem', '500', '0.5px'],
+  ])('pins %s to the M3 values', (role, size, lineHeight, weight, tracking) => {
+    const tokens = read('src/ui/tokens.css')
+    const value = (part: string) => tokens.match(new RegExp(`--md-sys-typescale-${role}-${part}:\\s*([^;]+);`))?.[1]
+    expect([value('size'), value('line-height'), value('weight'), value('tracking')]).toEqual([size, lineHeight, weight, tracking])
   })
 
   it('base styles paint the body and the focus ring from defined tokens', () => {
@@ -16,6 +38,21 @@ describe('design tokens', () => {
     for (const [, property] of base.matchAll(/var\((--[\w-]+)\)/g)) {
       expect(defined, property).toContain(property)
     }
+  })
+
+  it('sets the body in body-large', () => {
+    expect(typeDeclarations('src/ui/base.css', 'body')).toEqual(typeRoleDeclarations('body-large'))
+  })
+
+  it('defines no per-family size token or global line height, and no kit stylesheet reads an undefined token', () => {
+    for (const removed of typeFamilies.map((family) => `--md-sys-typescale-${family}-size`).concat('--md-sys-typescale-line-height')) {
+      expect(defined).not.toContain(removed)
+    }
+    const stylesheets = readdirSync(join(repoRoot, 'src'), { recursive: true, encoding: 'utf8' })
+      .filter((path) => path.endsWith('.css'))
+      .map((path) => join('src', path))
+    expect(stylesheets.length).toBeGreaterThan(10)
+    for (const stylesheet of stylesheets) expect(tokenUsage(stylesheet).undefinedTokens, stylesheet).toEqual([])
   })
 
   it('elevation shadows use a defined colour role', () => {

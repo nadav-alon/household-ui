@@ -14,8 +14,10 @@
 .shell-top-bar__title {
   flex: 1;
   margin: 0;
-  font-size: var(--md-sys-typescale-title-size);
-  font-weight: 400;
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  letter-spacing: var(--md-sys-typescale-title-large-tracking);
 }
 
 .shell-top-bar__actions {

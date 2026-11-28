@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { TextField } from './TextField.tsx'
-import { tokenUsage } from '../testing/css.ts'
+import { tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('TextField', () => {
   it('renders a native input labelled by its label', () => {
@@ -38,5 +38,17 @@ describe('TextField', () => {
     const { used, undefinedTokens } = tokenUsage('src/ui/Field.css')
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
+  })
+})
+
+describe('Field label type', () => {
+  it('is set in body-small', () => {
+    expect(typeDeclarations('src/ui/Field.css', '.ui-field__label')).toEqual(typeRoleDeclarations('body-small'))
+  })
+})
+
+describe('Field error type', () => {
+  it('is set in body-small', () => {
+    expect(typeDeclarations('src/ui/Field.css', '.ui-field__error')).toEqual(typeRoleDeclarations('body-small'))
   })
 })
