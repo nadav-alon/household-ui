@@ -122,3 +122,20 @@
   padding: var(--md-sys-spacing-4);
   resize: vertical;
 }
+
+select.ui-field__control {
+  appearance: none;
+  padding-right: calc(var(--md-sys-spacing-4) + 1.5rem + var(--md-sys-spacing-2));
+}
+
+.ui-field__trailing-icon {
+  position: absolute;
+  top: 50%;
+  right: var(--md-sys-spacing-3);
+  display: flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--md-sys-color-on-surface-variant);
+}

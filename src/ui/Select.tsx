@@ -2,6 +2,8 @@ import type { JSX } from 'preact'
 import { useUniqueId } from './useUniqueId.ts'
 import { useFieldError } from './FieldError.tsx'
 import { FieldFrame } from './FieldFrame.tsx'
+import { Icon } from './Icon.tsx'
+import ArrowDropDownIcon from '~icons/material-symbols/arrow-drop-down'
 
 export interface SelectProps extends Omit<JSX.SelectHTMLAttributes<HTMLSelectElement>, 'class' | 'className'> {
   label: string
@@ -20,6 +22,11 @@ export function Select({ label, error, id, 'aria-describedby': describedBy, ...r
       label={label}
       errorId={field.errorId}
       error={error}
+      trailing={
+        <span class="ui-field__trailing-icon">
+          <Icon symbol={ArrowDropDownIcon} size="1.5rem" />
+        </span>
+      }
       control={
         <select
           {...rest}
