@@ -97,8 +97,8 @@ describe('ListRow', () => {
     expect(outsideNarrowBlock()).not.toMatch(/stack-trailing/)
   })
 
-  it('gives a stacked row\'s segmented options a 48px touch target below 600px', () => {
-    expect(narrowBlock()).toMatch(/\.ui-list-row--stack-trailing \.ui-segmented__option\s*{[^}]*min-height: 3rem/)
+  it('leaves a stacked row\'s segmented options at their own height', () => {
+    expect(read('src/ui/ListRow.css')).not.toMatch(/ui-segmented__option/)
   })
 
   it('highlights a Settings row link on hover with an 8% on-surface state layer', () => {
