@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { ListRow } from './ListRow.tsx'
-import { declaration, mediaBlock, outsideMediaBlock, read, tokenUsage } from '../testing/css.ts'
+import { declaration, mediaBlock, outsideMediaBlock, read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 const stylesheet = 'src/ui/ListRow.css'
 const narrowBlock = () => mediaBlock(stylesheet, '(max-width: 599.98px)')
@@ -151,5 +151,17 @@ describe('ListRow', () => {
       expect(declaration(stylesheet, tick, 'height')).toBe('1.125rem')
       expect(declaration(stylesheet, '.ui-list-row__link', 'min-height')).toBe('3.5rem')
     })
+  })
+})
+
+describe('ListRow headline type', () => {
+  it('is set in body-large', () => {
+    expect(typeDeclarations('src/ui/ListRow.css', '.ui-list-row__headline')).toEqual(typeRoleDeclarations('body-large'))
+  })
+})
+
+describe('ListRow supporting type', () => {
+  it('is set in body-medium', () => {
+    expect(typeDeclarations('src/ui/ListRow.css', '.ui-list-row__supporting')).toEqual(typeRoleDeclarations('body-medium'))
   })
 })
