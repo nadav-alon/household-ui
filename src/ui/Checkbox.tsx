@@ -1,4 +1,5 @@
 import type { JSX } from 'preact'
+import './Checkbox.css'
 
 export interface CheckboxProps extends Omit<JSX.InputHTMLAttributes<HTMLInputElement>, 'type' | 'class' | 'className'> {
   /** A tappable label beside the box. Without it, name the checkbox with `aria-label`, or let a surrounding label (a `ListRow`'s control slot) name it. */
