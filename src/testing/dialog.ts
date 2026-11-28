@@ -16,9 +16,9 @@ export function actionLabels(dialog: HTMLElement): string[] {
   return [...dialog.querySelectorAll('form button')].map((button) => button.textContent ?? '')
 }
 
-/** Test-only: jsdom has no `matchMedia`; answers `(min-width: Npx)` and `(max-width: Npx)` queries for a viewport of `width` px. */
+/** Test-only: jsdom has no `matchMedia`; answers `(min-width: Npx)` and `(max-width: Npx)` queries for a viewport of `width` px. Undo with `vi.unstubAllGlobals()` in an `afterEach`. */
 export function stubViewport(width: number): void {
-  window.matchMedia = vi.fn((query: string) => {
+  vi.stubGlobal('matchMedia', (query: string) => {
     const bound = /\((min|max)-width:\s*([\d.]+)px\)/.exec(query)
     const limit = Number(bound?.[2])
     const matches = bound?.[1] === 'min' ? width >= limit : width <= limit

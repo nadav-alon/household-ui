@@ -1,6 +1,7 @@
 import type { ComponentChildren } from 'preact'
 import { useLayoutEffect, useRef } from 'preact/hooks'
 import { useMediaQuery } from './useMediaQuery.ts'
+import { compactViewportQuery } from './breakpoints.ts'
 import { useUniqueId } from './useUniqueId.ts'
 import { afterPendingPop, popEntry } from './pendingPop.ts'
 import { IconButton } from './IconButton.tsx'
@@ -46,7 +47,7 @@ function isBackdropPoint(event: MouseEvent & { currentTarget: HTMLDialogElement 
  */
 export function Dialog({ open, title, onClose, class: className, variant = 'basic', confirm: confirmAction, hasUnsavedEdits, children }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null)
-  const fullScreen = useMediaQuery('(max-width: 599.98px)') && variant === 'full-screen'
+  const fullScreen = useMediaQuery(compactViewportQuery) && variant === 'full-screen'
   const titleId = useUniqueId()
   const entryId = useUniqueId()
   const onCloseRef = useRef(onClose)
@@ -135,7 +136,7 @@ export function Dialog({ open, title, onClose, class: className, variant = 'basi
     >
       <div class="ui-dialog__header">
         {fullScreen && <IconButton symbol={CloseIcon} label="Close" onClick={requestClose} />}
-        <h2 class={fullScreen ? "ui-dialog__title ui-dialog__title--large" : "ui-dialog__title"} id={titleId}>
+        <h2 class={['ui-dialog__title', fullScreen && 'ui-dialog__title--large'].filter(Boolean).join(' ')} id={titleId}>
           {title}
         </h2>
         {fullScreen && confirmAction}

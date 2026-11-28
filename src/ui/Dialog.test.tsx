@@ -11,6 +11,7 @@ afterEach(async () => {
   cleanup()
   await new Promise((resolve) => setTimeout(resolve, 20))
   history.replaceState(null, '')
+  vi.unstubAllGlobals()
 })
 
 type Box = { left: number; top: number; right: number; bottom: number }
@@ -29,6 +30,8 @@ function stubBox(dialog: HTMLElement, box: Box) {
 
 // Click coordinates in the tests below are positions relative to this box.
 const box: Box = { left: 100, top: 100, right: 300, bottom: 300 }
+
+const rule = (selector: string, property: string) => declaration('src/ui/Dialog.css', selector, property)
 
 describe('Dialog', () => {
   it('is a native dialog opened modally, named by its title', () => {
@@ -259,14 +262,13 @@ describe('Dialog', () => {
   })
 
   it('is a centred 280–560dp box with 28dp corners at every width, as tall as its content', () => {
-    const rule = (property: string) => declaration('src/ui/Dialog.css', '.ui-dialog', property)
-    expect(mediaBlock('src/ui/Dialog.css', '(min-width: 600px)')).toBe('')
-    expect(rule('width')).toBe('min(35rem, calc(100% - var(--md-sys-spacing-8)))')
-    expect(rule('min-width')).toBe('min(17.5rem, calc(100% - var(--md-sys-spacing-8)))')
-    expect(rule('height')).toBe('fit-content')
-    expect(rule('max-height')).toBe('calc(100% - var(--md-sys-spacing-8))')
-    expect(rule('margin')).toBe('auto')
-    expect(rule('border-radius')).toBe('var(--md-sys-shape-corner-extra-large)')
+        expect(mediaBlock('src/ui/Dialog.css', '(min-width: 600px)')).toBe('')
+    expect(rule('.ui-dialog', 'width')).toBe('min(35rem, calc(100% - var(--md-sys-spacing-8)))')
+    expect(rule('.ui-dialog', 'min-width')).toBe('min(17.5rem, calc(100% - var(--md-sys-spacing-8)))')
+    expect(rule('.ui-dialog', 'height')).toBe('fit-content')
+    expect(rule('.ui-dialog', 'max-height')).toBe('calc(100% - var(--md-sys-spacing-8))')
+    expect(rule('.ui-dialog', 'margin')).toBe('auto')
+    expect(rule('.ui-dialog', 'border-radius')).toBe('var(--md-sys-shape-corner-extra-large)')
   })
 
   it('is styled only from defined tokens', () => {
@@ -307,7 +309,6 @@ describe('Dialog', () => {
     })
 
     it('fills the viewport edge to edge with no corners and a title-large title', () => {
-      const rule = (selector: string, property: string) => declaration('src/ui/Dialog.css', selector, property)
       expect(rule('.ui-dialog--full-screen', 'width')).toBe('100%')
       expect(rule('.ui-dialog--full-screen', 'height')).toBe('100%')
       expect(rule('.ui-dialog--full-screen', 'margin')).toBe('0')
@@ -331,11 +332,25 @@ describe('Dialog', () => {
       confirmSpy.mockRestore()
     })
 
+    it('closes at once from Close when not holding unsaved edits, without confirming', () => {
+      stubViewport(412)
+      const confirmSpy = vi.spyOn(window, 'confirm')
+      const onClose = vi.fn()
+      renderFullScreen(onClose)
+      fireEvent.click(screen.getByRole('button', { name: 'Close' }))
+      expect(confirmSpy).not.toHaveBeenCalled()
+      expect(onClose).toHaveBeenCalledOnce()
+      confirmSpy.mockRestore()
+    })
+
     it('hides the main part of a DialogActions row below 600px and keeps the destructive action', () => {
       stubViewport(412)
       renderFullScreen()
       expect(declaration('src/ui/Dialog.css', '.ui-dialog--full-screen .ui-dialog-actions__main', 'display')).toBe('none')
       expect(screen.getByRole('dialog')).toHaveClass('ui-dialog--full-screen')
+      expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Cancel' }).closest('.ui-dialog-actions__main')).not.toBeNull()
+      expect(screen.getByRole('button', { name: 'Delete' }).closest('.ui-dialog-actions__main')).toBeNull()
       expect(declaration('src/ui/Dialog.css', '.ui-dialog--full-screen .ui-dialog-actions__destructive', 'display')).toBeUndefined()
     })
 

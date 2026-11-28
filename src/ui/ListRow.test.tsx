@@ -2,11 +2,12 @@ import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { ListRow } from './ListRow.tsx'
 import { Checkbox } from './Checkbox.tsx'
+import { compactViewportQuery } from './breakpoints.ts'
 import { declaration, mediaBlock, outsideMediaBlock, read, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 const stylesheet = 'src/ui/ListRow.css'
-const narrowBlock = () => mediaBlock(stylesheet, '(max-width: 599.98px)')
-const outsideNarrowBlock = () => outsideMediaBlock(stylesheet, '(max-width: 599.98px)')
+const narrowBlock = () => mediaBlock(stylesheet, compactViewportQuery)
+const outsideNarrowBlock = () => outsideMediaBlock(stylesheet, compactViewportQuery)
 const hoverBlock = () => mediaBlock(stylesheet, '(hover: hover)')
 const outsideHoverBlock = () => outsideMediaBlock(stylesheet, '(hover: hover)')
 const hoverStateLayerDeclaration = 'background: color-mix\\(in srgb, var\\(--md-sys-color-on-surface\\) 8%, transparent\\)'
