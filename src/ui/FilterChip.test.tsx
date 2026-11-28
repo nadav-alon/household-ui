@@ -70,6 +70,7 @@ describe('FilterChip check icon', () => {
     expect(icon).toHaveAttribute('height', '1.125rem')
     expect(button.firstElementChild).toBe(icon)
   })
+
   it('pads 8dp before the icon, 16dp without it, 16dp trailing', () => {
     expect(declaration(stylesheet, '.ui-filter-chip', 'padding-inline')).toBe('var(--md-sys-spacing-4)')
     expect(declaration(stylesheet, ".ui-filter-chip[aria-pressed='true']", 'padding-inline-start')).toBe('var(--md-sys-spacing-2)')
