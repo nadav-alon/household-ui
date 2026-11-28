@@ -32,7 +32,7 @@ export const outsideMediaBlock = (stylesheet: string, query: string) => read(sty
 
 /** The value a stylesheet's last `selector { … }` rule gives `property`, or undefined when no rule sets it. */
 export function declaration(stylesheet: string, selector: string, property: string): string | undefined {
-  const rule = new RegExp(`${escape(selector)}\\s*{([^}]*)}`, 'g')
+  const rule = new RegExp(`(?:^|})\\s*${escape(selector)}\\s*{([^}]*)}`, 'gm')
   const values = [...read(stylesheet).matchAll(rule)].flatMap(([, body]) =>
     [...body!.matchAll(new RegExp(`(?:^|[;\\s])${escape(property)}\\s*:\\s*([^;]+)`, 'g'))].map((m) => m[1]!.trim()),
   )

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.0
+
+- New `Checkbox` (`ui/Checkbox.tsx`, `ui/Checkbox.css`): a native `<input type="checkbox">` with an 18dp box (on-surface-variant outline; primary fill with an on-primary check when selected), a 40dp state layer on hover (inside `(hover: hover)`) and focus-visible, and a 48dp hit area. `checked`, `onChange` and the other input props pass through. An optional `label` renders a tappable label beside the box in a row at least 48dp tall; without one, give it an `aria-label`.
+- **Breaking:** `ListRow.css` no longer styles `input[type=checkbox]` in the trailing slot, so a bare native checkbox there is unstyled. Pass `<Checkbox />` as the list row `control`; the row still toggles it from a tap anywhere on it.
+
 ## 0.9.0
 
 - `SegmentedButton` segments stay 2.5rem tall at every width: `ListRow` no longer raises them to 3rem inside a stacked row below 600px. A transparent `::after` extends each segment's hit area to at least 3rem tall without changing its layout height; `.ui-segmented__option` is now `position: relative` and `display: inline-flex`.
