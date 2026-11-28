@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { fireEvent, render, screen } from '@testing-library/preact'
 import { FilterChip } from './FilterChip.tsx'
-import { tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
+import { declaration, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
 describe('FilterChip', () => {
   it('is a button pressed only while selected', () => {
@@ -31,5 +31,27 @@ describe('FilterChip', () => {
 describe('FilterChip label type', () => {
   it('is set in label-large', () => {
     expect(typeDeclarations('src/ui/FilterChip.css', '.ui-filter-chip')).toEqual(typeRoleDeclarations('label-large'))
+  })
+})
+
+describe('FilterChip size', () => {
+  const css = 'src/ui/FilterChip.css'
+
+  it('is a 2rem container with the small corner', () => {
+    expect(declaration(css, '.ui-filter-chip', 'height')).toBe('2rem')
+    expect(declaration(css, '.ui-filter-chip', 'min-height')).toBeUndefined()
+    expect(declaration(css, '.ui-filter-chip', 'border-radius')).toBe('var(--md-sys-shape-corner-small)')
+  })
+
+  it('extends the hit area to at least 3rem tall, centred, without changing layout', () => {
+    const hit = '.ui-filter-chip::after'
+    expect(declaration(css, '.ui-filter-chip', 'position')).toBe('relative')
+    expect(declaration(css, hit, 'content')).toBe("''")
+    expect(declaration(css, hit, 'position')).toBe('absolute')
+    expect(declaration(css, hit, 'top')).toBe('50%')
+    expect(declaration(css, hit, 'left')).toBe('0')
+    expect(declaration(css, hit, 'width')).toBe('100%')
+    expect(declaration(css, hit, 'height')).toBe('max(100%, 3rem)')
+    expect(declaration(css, hit, 'transform')).toBe('translateY(-50%)')
   })
 })
