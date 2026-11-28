@@ -161,8 +161,8 @@ describe('ListRow', () => {
     expect(read(stylesheet)).not.toMatch(/italic/)
   })
 
-  it('renders a trailing SVG 1.5rem square, as a block', () => {
-    const svg = '.ui-list-row__trailing svg'
+  it('renders an SVG placed directly in the trailing slot 1.5rem square, as a block', () => {
+    const svg = '.ui-list-row__trailing > svg'
     expect(declaration(stylesheet, svg, 'display')).toBe('block')
     expect(declaration(stylesheet, svg, 'width')).toBe('1.5rem')
     expect(declaration(stylesheet, svg, 'height')).toBe('1.5rem')
