@@ -19,18 +19,21 @@ export interface SegmentedButtonProps<Value extends string> {
 export function SegmentedButton<Value extends string>({ label, options, value, onChange }: SegmentedButtonProps<Value>) {
   return (
     <div role="group" aria-label={label} class="ui-segmented">
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          class="ui-segmented__option"
-          aria-pressed={option.value === value}
-          onClick={() => onChange(option.value)}
-        >
-          {option.value === value && <Icon symbol={CheckIcon} size="1.125rem" />}
-          {option.label}
-        </button>
-      ))}
+      {options.map((option) => {
+        const selected = option.value === value
+        return (
+          <button
+            key={option.value}
+            type="button"
+            class="ui-segmented__option"
+            aria-pressed={selected}
+            onClick={() => onChange(option.value)}
+          >
+            {selected && <Icon symbol={CheckIcon} size="1.125rem" />}
+            {option.label}
+          </button>
+        )
+      })}
     </div>
   )
 }

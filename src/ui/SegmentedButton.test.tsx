@@ -3,6 +3,9 @@ import { fireEvent, render, screen } from '@testing-library/preact'
 import { SegmentedButton } from './SegmentedButton.tsx'
 import { declaration, tokenUsage, typeDeclarations, typeRoleDeclarations } from '../testing/css.ts'
 
+const stylesheet = 'src/ui/SegmentedButton.css'
+const option = '.ui-segmented__option'
+
 const options = [
   { value: 'enough', label: 'Enough' },
   { value: 'low', label: 'Running low' },
@@ -33,7 +36,7 @@ describe('SegmentedButton', () => {
   })
 
   it('is styled only from defined tokens', () => {
-    const { used, undefinedTokens } = tokenUsage('src/ui/SegmentedButton.css')
+    const { used, undefinedTokens } = tokenUsage(stylesheet)
     expect(used.length).toBeGreaterThan(0)
     expect(undefinedTokens).toEqual([])
   })
@@ -41,16 +44,14 @@ describe('SegmentedButton', () => {
 
 describe('SegmentedButton label type', () => {
   it('is set in label-large', () => {
-    expect(typeDeclarations('src/ui/SegmentedButton.css', '.ui-segmented__option')).toEqual(typeRoleDeclarations('label-large'))
+    expect(typeDeclarations(stylesheet, option)).toEqual(typeRoleDeclarations('label-large'))
   })
 })
 
 describe('SegmentedButton size', () => {
-  const stylesheet = 'src/ui/SegmentedButton.css'
-  const option = '.ui-segmented__option'
-
   it('is a 2.5rem container', () => {
-    expect(declaration(stylesheet, option, 'min-height')).toBe('2.5rem')
+    expect(declaration(stylesheet, option, 'box-sizing')).toBe('border-box')
+    expect(declaration(stylesheet, option, 'height')).toBe('2.5rem')
   })
 
   it('extends the hit area to at least 3rem tall, centred, without changing layout', () => {
@@ -79,11 +80,10 @@ describe('SegmentedButton check icon', () => {
     expect(screen.getByRole('button', { name: 'Out' }).querySelector('svg')).toBeNull()
   })
 
-  it('centres the icon beside the label with a 8dp gap', () => {
-    const option = '.ui-segmented__option'
-    expect(declaration('src/ui/SegmentedButton.css', option, 'display')).toBe('inline-flex')
-    expect(declaration('src/ui/SegmentedButton.css', option, 'align-items')).toBe('center')
-    expect(declaration('src/ui/SegmentedButton.css', option, 'justify-content')).toBe('center')
-    expect(declaration('src/ui/SegmentedButton.css', option, 'gap')).toBe('var(--md-sys-spacing-2)')
+  it('centres the icon beside the label with an 8dp gap', () => {
+    expect(declaration(stylesheet, option, 'display')).toBe('inline-flex')
+    expect(declaration(stylesheet, option, 'align-items')).toBe('center')
+    expect(declaration(stylesheet, option, 'justify-content')).toBe('center')
+    expect(declaration(stylesheet, option, 'gap')).toBe('var(--md-sys-spacing-2)')
   })
 })
